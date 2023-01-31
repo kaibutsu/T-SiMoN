@@ -1,0 +1,38 @@
+@font-face {
+    font-family: Oswald-Medium;
+    src: url(../fonts/Oswald-Medium.ttf);
+}
+
+body {
+    font-size: 100%;
+    font-family: Oswald-Medium !important;
+}
+
+.signal-canvas {
+    height: 100%;
+    width: 100%;
+}
+
+.monitor-container {
+    font-family: Oswald-Medium !important;
+}
+
+.signal-column {
+    height: 100px;
+}
+
+.parm-lg {
+    font-size: 4em;
+}
+
+.parm-sm {
+    font-size: 1em
+}
+
+.parm-md {
+    font-size: 4em
+}
+
+.trigger-button {
+    width: 100%;
+}
