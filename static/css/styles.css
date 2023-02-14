@@ -8,6 +8,22 @@ body {
     font-family: Oswald-Medium !important;
 }
 
+.disconnected {
+    color:violet
+}
+
+.connecting {
+    color:yellow
+}
+
+.connected {
+    color:lightgreen
+}
+
+.con_unavailable {
+    color:red
+}
+
 .signal-canvas {
     height: 100%;
     width: 100%;

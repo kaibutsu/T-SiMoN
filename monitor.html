@@ -19,7 +19,17 @@
         (but then code highlighting doesn't work...)    -->
         <script id="ractive-template" type="text/html">
         <!--                                            -->
-        <div class="text-end font-monospace">{{ display.connectionStatus }}</div>
+        <div class="text-end font-monospace">
+            {{#if (connection.status === "disconnected") }}
+            <span class="disconnected">Disconnected/Stand Alone Mode</span>
+            {{elseif (connection.status === "connecting") }}
+            <span class="connecting">Connecting to [[HOST]]</span>
+            {{elseif (connection.status === "connected") }}
+            <span class="connected">Connected to [[HOST]]</span>
+            {{else}}
+            <span class="con_unavailable">Connection Status Unavailable</span>
+            {{/if}}
+        </div>
         <div class="row mb-2 rounded text-bg-light">
             <div class="col-8 text-start">{{ patient.fullName }} *{{ patient.dob.toLocaleDateString() }}</div>
             <div class="col-4 text-end">{{ display.dateTime }}</div>
