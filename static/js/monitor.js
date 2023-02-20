@@ -128,8 +128,33 @@ ractive = new Ractive({
                 rBeep: false,
             },
         },
-        connected: false,
+        connection: {
+            status: 'disconnected',
+            peerId: '',
+            peers: [],
+        }
     }
+});
+
+var peer = new Peer(generateWordString(wordStringLength));
+let peerConection = null;
+
+peer.on('open', (id) => {
+    ractive.set('connection.peerId', id);
+});
+
+peer.on('connection', (c) => {
+    peerConection = c;
+
+    ractive.set(['connection.status','connection.peers'],
+    [
+        "connected",
+        ractive.get('connection.peers').push(peerConection.peer),
+    ])
+
+    peerConection.on('data', (data) => {
+        // Work with data...
+    });
 });
 
 ractive.observe('display.triggers.*', (newValue, oldValue, keypath) => {
@@ -177,10 +202,12 @@ if (!signalUpdateTimer) {
         if (ractive.get('display.triggers.rBeep') & (!(ecgBufferPointer.pos < ecgBufferPointer.size))) {
             beep(
                 150,
-                220 + (220/100*ractive.get('display.pleth')),
+                220 + (220 / 100 * ractive.get('display.pleth')),
                 100,
                 monitorAudioContext
             );
         }
     }, 1000 / signalPixelsPerSecond);
 }
+
+

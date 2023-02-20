@@ -1,7 +1,7 @@
 # T-SiMoN
 An open source Telesimulation Monitor for Neonatal Scenarios
 
-This project is greatly influenced by [Barry Robinson's Vital Signs Monitor](https://github.com/BarryRobinson/Vital-Signs-Monitor).
+This project is heavily influenced by [Barry Robinson's Vital Signs Monitor](https://github.com/BarryRobinson/Vital-Signs-Monitor).
 
 ## Credits
 

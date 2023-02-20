@@ -15,17 +15,17 @@
     &nbsp;
     <div id="ractive-target" class="container monitor-container">
         <!-- should actually be
-        <script id="ractive-template" type="text/ractive">
-        (but then code highlighting doesn't work...)    -->
+            <script id="ractive-template" type="text/ractive">
+        -->
         <script id="ractive-template" type="text/html">
-        <!--                                            -->
+        <!-- (but then code highlighting doesn't work...)  -->
         <div class="text-end font-monospace">
-            {{#if (connection.status === "disconnected") }}
-            <span class="disconnected">Disconnected/Stand Alone Mode</span>
-            {{elseif (connection.status === "connecting") }}
-            <span class="connecting">Connecting to [[HOST]]</span>
-            {{elseif (connection.status === "connected") }}
-            <span class="connected">Connected to [[HOST]]</span>
+            {{#if (connection.peerId.length === '') }}
+            <span class="disconnected">Stand alone mode (offline)</span>
+            {{elseif (connection.peers.length === 0) }}
+            <span class="connecting">Stand alone mode (online). Available with Peer ID: {{ connection.peerId }}</span>
+            {{elseif (connection.peers.length > 0) }}
+            <span class="connected">Remote mode as {{ connection.peerId }}. Connected peers: {{ connection.peers }}</span>
             {{else}}
             <span class="con_unavailable">Connection Status Unavailable</span>
             {{/if}}
@@ -147,6 +147,7 @@
 <script src="./static/lib/js/bootstrap.bundle.min.js"></script>
 <script src="./static/lib/js/peerjs.min.js"></script>
 <script src="./static/js/globals.js"></script>
+<script src="./static/js/wordsGenerator.js"></script>
 <script src="./static/js/classes.js"></script>
 <script src="./static/js/helpers.js"></script>
 <script src="./static/js/signals.js"></script>

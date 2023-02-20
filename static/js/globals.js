@@ -7,3 +7,4 @@ const contexts = {};
 const updateInterval = 100;
 const signalPixelsPerSecond = 150;
 const signalLineWidth = 4;
+const wordStringLength = 3;
