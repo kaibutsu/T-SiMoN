@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="icon" type="image/svg" href="./static/logos/favicon.svg">
+    <link rel="stylesheet" href="./static/css/styles.css">
+    <link rel="stylesheet" href="./static/lib/css/bootstrap.min.css">
+
+    <script src="./static/lib/js/ractive.min.js" defer></script>
+    <script src="./static/lib/js/bootstrap.bundle.min.js" defer></script>
+    <script src="./static/lib/js/peerjs.min.js" defer></script>
+    <script src="./static/js/globals.js" defer></script>
+    <script src="./static/js/classes.js" defer></script>
+    <script src="./static/js/helpers.js" defer></script>
+
+    <title>Simulator - T-SiMoN</title>
+</head>
+
+<body>
+    {{#each vitals, @keypath keypath}}
+    <div class="col">
+        <label class="form-label" for="{{ keypath }}-target">{{{ .title }}}</label>
+        <input class="form-control" type="number" value="{{ .target }}" min="{{ .mi }}" max="{{ .max }}"
+            id="{{ keypath }}-target">
+        <label class="form-label mt-2" for="{{ keypath }}-override">Override:</label>
+        <input class="form-control" type="text" value="{{ .override }}" id="{{ keypath }}-override">
+    </div>
+    {{/each}}
+</body>
+
+</body>
+
+
+
+</html>

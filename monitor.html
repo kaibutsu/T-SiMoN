@@ -2,13 +2,24 @@
 <html>
 
 <head>
-    <title>Monitor - T-SiMoN</title>
-    <meta http-equiv="imagetoolbar" content="no" />
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <link rel="icon" type="image/svg" href="./static/logos/favicon.svg">
     <link rel="stylesheet" href="./static/css/styles.css">
     <link rel="stylesheet" href="./static/lib/css/bootstrap.min.css">
+
+    <script src="./static/lib/js/ractive.min.js" defer></script>
+    <script src="./static/lib/js/bootstrap.bundle.min.js" defer></script>
+    <script src="./static/lib/js/peerjs.min.js" defer></script>
+    <script src="./static/js/globals.js" defer></script>
+    <script src="./static/js/classes.js" defer></script>
+    <script src="./static/js/helpers.js" defer></script>
+    <script src="./static/js/signals.js" defer></script>
+    <script src="./static/js/monitor.js" defer></script>
+
+    <title>Monitor - T-SiMoN</title>
 </head>
 
 <body class="text-bg-dark">
@@ -31,7 +42,7 @@
             {{/if}}
         </div>
         <div class="row mb-2 rounded text-bg-light">
-            <div class="col-8 text-start">{{ patient.fullName }} *{{ patient.dob.toLocaleDateString() }}</div>
+            <div class="col-8 text-start">{{ patient.surname + ", " + patient.firstName }} *{{ patient.dob.toLocaleDateString() }}</div>
             <div class="col-4 text-end">{{ display.dateTime }}</div>
         </div>
         <div {{ display.triggers.ecg ? "" : "hidden" }} style-color="{{ display.colors.ecg }}">
@@ -45,7 +56,8 @@
                     <canvas class="buffer-canvas" id="ecgBufferCanvas" hidden></canvas>
                     <canvas class="signal-canvas" id="ecgSigCanvas"></canvas>
                 </div>
-                <div class="col-4" on-wheel="@.add('vitals.hfEcg.target', (@event.wheelDeltaY/120))"><span>{{ display.hfEcg }}</span></div>
+                <div class="col-4" on-wheel="@.add('vitals.hfEcg.target', (@event.wheelDeltaY/120))"><span>{{
+                        display.hfEcg }}</span></div>
             </div>
         </div>
         <div {{ display.triggers.pleth ? "" : "hidden" }} style-color="{{ display.colors.pleth }}">
@@ -60,8 +72,10 @@
                     <canvas class="buffer-canvas" id="plethBufferCanvas" hidden></canvas>
                     <canvas class="signal-canvas" id="plethSigCanvas"></canvas>
                 </div>
-                <div class="col-2" on-wheel="@.add('vitals.pleth.target', (@event.wheelDeltaY/120))">{{ display.pleth }}</div>
-                <div class="col-2" on-wheel="@.add('vitals.hfPleth.target', (@event.wheelDeltaY/120))">{{ display.hfPleth }}</div>
+                <div class="col-2" on-wheel="@.add('vitals.pleth.target', (@event.wheelDeltaY/120))">{{ display.pleth }}
+                </div>
+                <div class="col-2" on-wheel="@.add('vitals.hfPleth.target', (@event.wheelDeltaY/120))">{{
+                    display.hfPleth }}</div>
             </div>
         </div>
         <div {{ display.triggers.resp ? "" : "hidden" }} style-color="{{ display.colors.resp }}">
@@ -75,7 +89,8 @@
                     <canvas class="buffer-canvas" id="respBufferCanvas" hidden></canvas>
                     <canvas class="signal-canvas" id="respSigCanvas"></canvas>
                 </div>
-                <div class="col-4" on-wheel="@.add('vitals.resp.target', (@event.wheelDeltaY/120))">{{ display.resp }}</div>
+                <div class="col-4" on-wheel="@.add('vitals.resp.target', (@event.wheelDeltaY/120))">{{ display.resp }}
+                </div>
             </div>
         </div>
         <div {{#unless (display.triggers.nbp || display.triggers.temp)}}hidden{{/unless}}>
@@ -125,31 +140,25 @@
             </div>
             <div class="col-2"></div>
             <div class="col"><a class="trigger-button btn btn-{{^rBeep}}outline-{{/rBeep}}light"
-                on-click="@.toggle('display.triggers.rBeep')">Beep</a></div>
+                    on-click="@.toggle('display.triggers.rBeep')">Beep</a></div>
             {{/with}}
         </div>
+        {{#if display.connection.status = "standAlone"}}
         <div class="row mt-5 mb-2">Target Values:</div>
         <div class="row">
             {{#each vitals, @keypath keypath}}
             <div class="col">
                 <label class="form-label" for="{{ keypath }}-target">{{{ .title }}}</label>
-                <input class="form-control" type="number" value="{{ .target }}" min="{{ .mi }}" max="{{ .max }}" id="{{ keypath }}-target">
+                <input class="form-control" type="number" value="{{ .target }}" min="{{ .mi }}" max="{{ .max }}"
+                    id="{{ keypath }}-target">
                 <label class="form-label mt-2" for="{{ keypath }}-override">Override:</label>
                 <input class="form-control" type="text" value="{{ .override }}" id="{{ keypath }}-override">
             </div>
             {{/each}}
         </div>
+        {{/if}}
         </script>
     </div>
 </body>
-
-<script src="./static/lib/js/ractive.min.js"></script>
-<script src="./static/lib/js/bootstrap.bundle.min.js"></script>
-<script src="./static/lib/js/peerjs.min.js"></script>
-<script src="./static/js/globals.js"></script>
-<script src="./static/js/classes.js"></script>
-<script src="./static/js/helpers.js"></script>
-<script src="./static/js/signals.js"></script>
-<script src="./static/js/monitor.js"></script>
 
 </html>
