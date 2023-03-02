@@ -14,10 +14,10 @@
     <script src="./static/lib/js/bootstrap.bundle.min.js" defer></script>
     <script src="./static/lib/js/peerjs.min.js" defer></script>
     <script src="./static/js/globals.js" defer></script>
-    <script src="./static/js/classes.js" defer></script>
     <script src="./static/js/helpers.js" defer></script>
     <script src="./static/js/signals.js" defer></script>
     <script src="./static/js/monitor.js" defer></script>
+    <script src="./static/js/wordsGenerator.js" defer></script>
 
     <title>Monitor - T-SiMoN</title>
 </head>
@@ -143,7 +143,7 @@
                     on-click="@.toggle('display.triggers.rBeep')">Beep</a></div>
             {{/with}}
         </div>
-        {{#if display.connection.status = "standAlone"}}
+        {{#if display.connection.status == "standAlone"}}
         <div class="row mt-5 mb-2">Target Values:</div>
         <div class="row">
             {{#each vitals, @keypath keypath}}
