@@ -15,9 +15,9 @@
     <script src="./static/lib/js/peerjs.min.js" defer></script>
     <script src="./static/js/globals.js" defer></script>
     <script src="./static/js/helpers.js" defer></script>
+    <script src="./static/js/wordsGenerator.js" defer></script>
     <script src="./static/js/signals.js" defer></script>
     <script src="./static/js/monitor.js" defer></script>
-    <script src="./static/js/wordsGenerator.js" defer></script>
 
     <title>Monitor - T-SiMoN</title>
 </head>
@@ -45,7 +45,7 @@
             <div class="col-8 text-start">{{ patient.surname + ", " + patient.firstName }} *{{ patient.dob.toLocaleDateString() }}</div>
             <div class="col-4 text-end">{{ display.dateTime }}</div>
         </div>
-        <div {{ display.triggers.ecg ? "" : "hidden" }} style-color="{{ display.colors.ecg }}">
+        <div {{ triggers.ecg ? "" : "hidden" }} style-color="{{ display.colors.ecg }}">
             <div class="row parm-sm">
                 <div class="col-1">ECG - II</div>
                 <div class="col-7"></div>
@@ -60,7 +60,7 @@
                         display.hfEcg }}</span></div>
             </div>
         </div>
-        <div {{ display.triggers.pleth ? "" : "hidden" }} style-color="{{ display.colors.pleth }}">
+        <div {{ triggers.pleth ? "" : "hidden" }} style-color="{{ display.colors.pleth }}">
             <div class="row parm-sm">
                 <div class="col-1">Pleth</div>
                 <div class="col-7"></div>
@@ -78,7 +78,7 @@
                     display.hfPleth }}</div>
             </div>
         </div>
-        <div {{ display.triggers.resp ? "" : "hidden" }} style-color="{{ display.colors.resp }}">
+        <div {{ triggers.resp ? "" : "hidden" }} style-color="{{ display.colors.resp }}">
             <div class="row parm-sm">
                 <div class="col-1">Resp</div>
                 <div class="col-7"></div>
@@ -93,57 +93,57 @@
                 </div>
             </div>
         </div>
-        <div {{#unless (display.triggers.nbp || display.triggers.temp)}}hidden{{/unless}}>
+        <div {{#unless (triggers.nbp || triggers.temp)}}hidden{{/unless}}>
             <div class="row parm-sm">
                 <div class="col-1" style-color="{{ display.colors.nbp }}">
-                    <span {{ display.triggers.nbp ? "" : "hidden" }}>NBP</span>
+                    <span {{ triggers.nbp ? "" : "hidden" }}>NBP</span>
                 </div>
                 <div class="col-9"></div>
                 <div class="col-2" style-color="{{ display.colors.temp }}">
-                    <span {{ display.triggers.temp ? "" : "hidden" }}>Temp (&deg;C)</span>
+                    <span {{ triggers.temp ? "" : "hidden" }}>Temp (&deg;C)</span>
                 </div>
             </div>
             <div class="row parm-lg">
                 <div class="col-6" style-color="{{ display.colors.nbp }}">
-                    <span {{ display.triggers.nbp ? "" : "hidden" }}>
+                    <span {{ triggers.nbp ? "" : "hidden" }}>
                         {{ display.nbpSys }} / {{ display.nbpDia }} ({{ (2 * display.nbpDia + display.nbpSys)/3 }})
                     </span>
                 </div>
                 <div class="col-4"></div>
                 <div class="col-2" style-color="{{ display.colors.temp }}">
-                    <span {{ display.triggers.temp ? "" : "hidden" }}> {{ display.temp }}</span>
+                    <span {{ triggers.temp ? "" : "hidden" }}> {{ display.temp }}</span>
                 </div>
             </div>
         </div>
         <hr>
         <div class="row text-center">
-            {{#with display.triggers}}
+            {{#with triggers}}
             <div class="col">
                 <a class="trigger-button btn btn-{{^ecg}}outline-{{/ecg}}light"
-                    on-click="@.toggle('display.triggers.ecg')">ECG</a>
+                    on-click="@.toggle('triggers.ecg')">ECG</a>
             </div>
             <div class="col">
                 <a class="trigger-button btn btn-{{^pleth}}outline-{{/pleth}}light"
-                    on-click="@.toggle('display.triggers.pleth')">SpO<sub>2</sub></a>
+                    on-click="@.toggle('triggers.pleth')">SpO<sub>2</sub></a>
             </div>
             <div class="col">
                 <a class="trigger-button btn btn-{{^resp}}outline-{{/resp}}light"
-                    on-click="@.toggle('display.triggers.resp')">Resp</a>
+                    on-click="@.toggle('triggers.resp')">Resp</a>
             </div>
             <div class="col">
                 <a class="trigger-button btn btn-{{^nbp}}outline-{{/nbp}}light"
-                    on-click="@.toggle('display.triggers.nbp')">NBP</a>
+                    on-click="@.toggle('triggers.nbp')">NBP</a>
             </div>
             <div class="col">
                 <a class="trigger-button btn btn-{{^temp}}outline-{{/temp}}light"
-                    on-click="@.toggle('display.triggers.temp')">Temp</a>
+                    on-click="@.toggle('triggers.temp')">Temp</a>
             </div>
             <div class="col-2"></div>
             <div class="col"><a class="trigger-button btn btn-{{^rBeep}}outline-{{/rBeep}}light"
-                    on-click="@.toggle('display.triggers.rBeep')">Beep</a></div>
+                    on-click="@.toggle('triggers.rBeep')">Beep</a></div>
             {{/with}}
         </div>
-        {{#if display.connection.status == "standAlone"}}
+        {{#if display.connection.status != "connected"}}
         <div class="row mt-5 mb-2">Target Values:</div>
         <div class="row">
             {{#each vitals, @keypath keypath}}

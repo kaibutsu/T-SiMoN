@@ -14,22 +14,37 @@
     <script src="./static/lib/js/bootstrap.bundle.min.js" defer></script>
     <script src="./static/lib/js/peerjs.min.js" defer></script>
     <script src="./static/js/globals.js" defer></script>
-    <script src="./static/js/classes.js" defer></script>
     <script src="./static/js/helpers.js" defer></script>
+    <script src="./static/js/wordsGenerator.js" defer></script>
+    <script src="./static/js/simulator.js" defer></script>
 
     <title>Simulator - T-SiMoN</title>
 </head>
 
 <body>
-    {{#each vitals, @keypath keypath}}
-    <div class="col">
-        <label class="form-label" for="{{ keypath }}-target">{{{ .title }}}</label>
-        <input class="form-control" type="number" value="{{ .target }}" min="{{ .mi }}" max="{{ .max }}"
-            id="{{ keypath }}-target">
-        <label class="form-label mt-2" for="{{ keypath }}-override">Override:</label>
-        <input class="form-control" type="text" value="{{ .override }}" id="{{ keypath }}-override">
+    <div id="ractive-target" class="container">
+        <!-- should actually be
+            <script id="ractive-template" type="text/ractive">
+        -->
+        <script id="ractive-template" type="text/html">
+            <!-- (but then code highlighting doesn't work...)  -->
+        <div>
+            Connect to <input type="text" value="{{ monitorPeerId }}"> <input type="button" on-click="peerConnect()" value="Connect">
+        </div>
+        <div>
+            Connected to {{ connection.peers }}
+        </div>
+        {{#each vitals, @keypath keypath}}
+        <div class="col">
+            <label class="form-label" for="{{ keypath }}-target">{{{ .title }}}</label>
+            <input class="form-control" type="number" value="{{ .target }}" min="{{ .mi }}" max="{{ .max }}"
+                id="{{ keypath }}-target">
+            <label class="form-label mt-2" for="{{ keypath }}-override">Override:</label>
+            <input class="form-control" type="text" value="{{ .override }}" id="{{ keypath }}-override">
+        </div>
+        {{/each}}
+        </script>
     </div>
-    {{/each}}
 </body>
 
 </body>
