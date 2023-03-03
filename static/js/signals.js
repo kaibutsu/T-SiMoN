@@ -68,8 +68,8 @@ function bufferNextCurve(signalName, amplitude = 0.9) {
     let signalContext = contexts[signalName]["signal"];
     let bufferContext = contexts[signalName]["buffer"];
     let bufferPointer = bufferPointers[signalName];
-    let eventParameter = ractive.get("display.signals." + signalName + ".eventParameter")
-    let eventRate = ractive.get("display." + eventParameter)
+    let eventVital = ractive.get("display.signals." + signalName + ".eventVital")
+    let eventRate = ractive.get("display." + eventVital)
 
     // Adapt buffer size to one event:
     let bufferWidth = bufferContext.canvas.width = Math.round((60 / eventRate) * signalPixelsPerSecond);

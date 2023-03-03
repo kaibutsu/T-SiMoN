@@ -1,25 +1,25 @@
-function varyParameter(parameterName) {
-    parameter = ractive.get('vitals.' + parameterName)
+function varyVital(vitalName) {
+    vital = ractive.get('vitals.' + vitalName)
 
-    if (parameter.override) {
+    if (vital.override) {
         ractive.set(
-            'display.' + parameterName,
-            ractive.get('display.' + parameter.override)
+            'display.' + vitalName,
+            ractive.get('display.' + vital.override)
         );
         return;
     }
 
     let newDisplay = Math.round(
-        parameter.target
-        + (2 * (Math.random() - 0.5) * parameter.varAmp)
+        vital.target
+        + (2 * (Math.random() - 0.5) * vital.varAmp)
     )
     newDisplay = Math.max(
         Math.min(
-            newDisplay, parameter.max
-        ), parameter.min
+            newDisplay, vital.max
+        ), vital.min
     )
 
-    ractive.set('display.' + parameterName, newDisplay)
+    ractive.set('display.' + vitalName, newDisplay)
 };
 
 function updateMonitor() {
@@ -28,11 +28,11 @@ function updateMonitor() {
     runtime += updateInterval;
     ractive.set('display.dateTime', new Date().toLocaleString());
 
-    Object.entries(vitals).forEach(([parameterName, parameterDef]) => {
+    Object.entries(vitals).forEach(([vitalName, vitalDef]) => {
         if (
-            runtime % ractive.get("vitals." + parameterName + ".varFreq") < updateInterval
+            runtime % ractive.get("vitals." + vitalName + ".varFreq") < updateInterval
         ) {
-            varyParameter(parameterName)
+            varyVital(vitalName)
         }
     });
 }

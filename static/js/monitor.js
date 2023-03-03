@@ -2,38 +2,13 @@ ractive = new Ractive({
     target: '#ractive-target',
     template: '#ractive-template',
     data: {
-        patient: fallbackPatient,
-        vitals: fallbackVitals,
+        patient: standardPatient,
+        vitals: standardVitals,
         display: {
-            colors: {
-                ecg: 'lawngreen',
-                pleth: 'skyblue',
-                nbp: 'GhostWhite',
-                resp: 'gold',
-                temp: 'orange',
-            },
-            signals: {
-                pleth: {
-                    id: 'pleth',
-                    title: 'Pleth',
-                    eventParameter: 'hfEcg',
-                    trigger: 'pleth',
-                },
-                ecg: {
-                    id: 'ecg',
-                    title: 'ECG',
-                    eventParameter: 'hfEcg',
-                    trigger: 'ecg',
-                },
-                resp: {
-                    id: 'resp',
-                    title: 'Resp',
-                    eventParameter: 'resp',
-                    trigger: 'resp',
-                },
-            },
+            colors: standardColors,
+            signals: standardSignals,
         },
-        triggers: fallbackTriggers,
+        triggers: standardTriggers,
         connection: {
             status: 'disconnected',
             peerId: '',

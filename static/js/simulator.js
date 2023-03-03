@@ -1,8 +1,3 @@
-
-function peerConnect() {
-    console.log("test")
-}
-
 ractive = new Ractive({
     target: '#ractive-target',
     template: '#ractive-template',

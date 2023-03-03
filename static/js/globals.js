@@ -9,14 +9,43 @@ const signalPixelsPerSecond = 150;
 const signalLineWidth = 4;
 const wordStringLength = 3;
 
-const fallbackPatient = {
+const standardColors = {
+    ecg: 'lawngreen',
+    pleth: 'skyblue',
+    nbp: 'GhostWhite',
+    resp: 'gold',
+    temp: 'orange',
+}
+
+const standardSignals = {
+    pleth: {
+        id: 'pleth',
+        title: 'Pleth',
+        eventVital: 'hfEcg',
+        trigger: 'pleth',
+    },
+    ecg: {
+        id: 'ecg',
+        title: 'ECG',
+        eventVital: 'hfEcg',
+        trigger: 'ecg',
+    },
+    resp: {
+        id: 'resp',
+        title: 'Resp',
+        eventVital: 'resp',
+        trigger: 'resp',
+    },
+}
+
+const standardPatient = {
     firstName: 'John',
     surname: 'Doe',
     dob: new Date('1970-01-01T00:00:00'),
     pid: '123456789',
 };
 
-const fallbackVitals = {
+const standardVitals = {
     hfEcg: {
         id: 'hfEcg',
         title: 'HF<sub>ECG</sub> (bpm)',
@@ -103,7 +132,7 @@ const fallbackVitals = {
     },
 };
 
-const fallbackTriggers = {
+const standardTriggers = {
     ecg: true,
     pleth: true,
     resp: false,
