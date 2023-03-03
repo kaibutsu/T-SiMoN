@@ -27,12 +27,21 @@
             <script id="ractive-template" type="text/ractive">
         -->
         <script id="ractive-template" type="text/html">
-            <!-- (but then code highlighting doesn't work...)  -->
+        <!-- (but then code highlighting doesn't work...)  -->
         <div>
-            Connect to <input type="text" value="{{ monitorPeerId }}"> <input type="button" on-click="peerConnect()" value="Connect">
+            Peer-ID: {{ connection.peerId }}
         </div>
         <div>
-            Connected to {{ connection.peers }}
+            Connect to <input type="text" value="{{ connection.monitorPeerId }}"> <input type="button"
+                on-click="@this.connectToMonitor(connection.monitorPeerId)" value="Connect">
+        </div>
+        <div>
+            Connected to
+            <ul>
+                {{#each connection.peers as ePeer}}
+                <li>{{ePeer}}</li>
+                {{/each}}
+            </ul>
         </div>
         {{#each vitals, @keypath keypath}}
         <div class="col">

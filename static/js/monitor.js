@@ -18,22 +18,19 @@ ractive = new Ractive({
 });
 
 var peer = new Peer(generateWordString(wordStringLength));
-let peerConection = null;
+let peerConnection = null;
 
 peer.on('open', (id) => {
     ractive.set('connection.peerId', id);
 });
 
 peer.on('connection', (c) => {
-    peerConection = c;
+    peerConnection = c;
 
-    ractive.set(['connection.status','connection.peers'],
-    [
-        "connected",
-        ractive.get('connection.peers').push(peerConection.peer),
-    ])
+    ractive.set('connection.status', 'connected');
+    ractive.push('connection.peers', peerConnection.peer)
 
-    peerConection.on('data', (data) => {
+    peerConnection.on('data', (data) => {
         // Work with data...
     });
 });
@@ -45,7 +42,7 @@ ractive.observe('triggers.*', (newValue, oldValue, keypath) => {
             updateCanvas(signalName)
         }
     })
-    if (triggerName === "rBeep") {
+    if (triggerName === 'rBeep') {
         newValue ? monitorAudioContext = new AudioContext() : monitorAudioContext.close();
     }
 }, { 'init': false, 'defer': true });

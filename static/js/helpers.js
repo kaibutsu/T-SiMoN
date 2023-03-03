@@ -30,7 +30,7 @@ function updateMonitor() {
 
     Object.entries(vitals).forEach(([vitalName, vitalDef]) => {
         if (
-            runtime % ractive.get("vitals." + vitalName + ".varFreq") < updateInterval
+            runtime % ractive.get('vitals.' + vitalName + '.varFreq') < updateInterval
         ) {
             varyVital(vitalName)
         }
@@ -50,7 +50,7 @@ function updateMonitor() {
  **/
 function beep(duration, frequency, volume, audioContext){
     if (!audioContext | !(audioContext instanceof AudioContext)) {
-        throw new Error("No valid AudioContext given.")
+        throw new Error('No valid AudioContext given.')
     }
     
     return new Promise((resolve, reject) => {
@@ -69,7 +69,7 @@ function beep(duration, frequency, volume, audioContext){
             oscillatorNode.frequency.value = frequency;
 
             // Set the type of oscillator
-            oscillatorNode.type= "sine";
+            oscillatorNode.type= 'sine';
             gainNode.connect(myAudioContext.destination);
 
             // Set the gain to the volume

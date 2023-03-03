@@ -7,28 +7,37 @@ ractive = new Ractive({
         connection: {
             status: 'disconnected',
             peerId: '',
+            monitorPeerId: '',
             peers: [],
-        }
+        },
+    },
+    connectToMonitor: (monitorPeerId) => {
+        c = peer.connect(monitorPeerId);
+        initConnection(c)
     }
 });
 
 var peer = new Peer(generateWordString(wordStringLength));
-let peerConection = null;
+let peerConnection = null;
 
 peer.on('open', (id) => {
     ractive.set('connection.peerId', id);
 });
 
-peer.on('connection', (c) => {
-    peerConection = c;
+peer.on('connection', initConnection);
 
-    ractive.set(['connection.status', 'connection.peers'],
-        [
-            "connected",
-            ractive.get('connection.peers').push(peerConection.peer),
-        ])
+peer.on('disconnected', (c) => {
+    ractive.set('connection.status', 'disconnected');
+    ractive.push('connection.peers', peerConnection.peer);
+})
 
-    peerConection.on('data', (data) => {
+function initConnection(c) {
+    peerConnection = c;
+
+    ractive.set('connection.status', 'connected');
+    ractive.push('connection.peers', peerConnection.peer);
+
+    peerConnection.on('data', (data) => {
         // Work with data...
     });
-});
+}
