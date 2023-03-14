@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html>
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
@@ -22,141 +22,163 @@
     <title>Monitor - T-SiMoN</title>
 </head>
 
-<body class="text-bg-dark">
+<body style="background-color: #001632;">
     &nbsp;
-    <div id="ractive-target" class="container monitor-container">
+    <div id="ractive-target">
         <!-- should actually be
-            <script id="ractive-template" type="text/ractive">
-        -->
+        <script id="ractive-template" type="text/ractive"> -->
         <script id="ractive-template" type="text/html">
         <!-- (but then code highlighting doesn't work...)  -->
-        <div class="text-end font-monospace">
-            {{#if (connection.peerId.length === '') }}
-            <span class="disconnected">Stand alone mode (offline)</span>
-            {{elseif (connection.peers.length === 0) }}
-            <span class="connecting">Stand alone mode (online). Available with Peer ID: {{ connection.peerId }}</span>
-            {{elseif (connection.peers.length > 0) }}
-            <span class="connected">Remote mode as {{ connection.peerId }}. Connected peers: {{ connection.peers }}</span>
-            {{else}}
-            <span class="con_unavailable">Connection Status Unavailable</span>
+
+        <div class="container">
+            <div class="monitor-container">
+                <div class="text-end font-monospace">
+                    {{#if (connection.peerId === '') }}
+                    <span class="offline">Stand alone mode (offline)</span>
+                    {{elseif (connection.remotePeerId === '') }}
+                    <span class="online">
+                        Stand alone mode (online). Available with Peer ID:
+                        <a href="{{ encodeURI('./simulator.html?monitorPeerId=' + connection.peerId) }}"
+                            target="_blank">{{ connection.peerId }}</a>.
+                    </span>
+                    {{elseif (connection.remotePeerId != '') }}
+                    <span class="connected">
+                        Remote mode as {{ connection.peerId }}. Simulator: {{ connection.remotePeerId }}
+                    </span>
+                    {{else}}
+                    <span class="con_unavailable">Connection Status Unavailable</span>
+                    {{/if}}
+                </div>
+                <div class="row mb-2 rounded text-bg-light">
+                    <div class="col-4 text-start">{{ patient.lastName }}, {{ patient.firstName }} (PID: {{ patient.pid
+                        }})
+                    </div>
+                    <div class="col-4 text-center">*{{ patient.dob.replace('T', ', ') }}</div>
+                    <div class="col-4 text-end">{{ display.dateTime }}</div>
+                </div>
+                <div {{ triggers.ecg ? "" : "hidden" }} style-color="{{ display.colors.ecg }}">
+                    <div class="row parameter-small">
+                        <div class="col-1">ECG - II</div>
+                        <div class="col-7"></div>
+                        <div class="col-4">HR<sub>ECG</sub> (bpm)</div>
+                    </div>
+                    <div class="row parameter-large">
+                        <div class="col-8 signal-column">
+                            <canvas class="buffer-canvas" id="ecgBufferCanvas" hidden></canvas>
+                            <canvas class="signal-canvas" id="ecgSigCanvas"></canvas>
+                        </div>
+                        <div class="col-4" on-wheel="@.add('vitals.hfEcg.target', (@event.wheelDeltaY/120))"><span>{{
+                                display.hfEcg }}</span></div>
+                    </div>
+                </div>
+                <div {{ triggers.pleth ? "" : "hidden" }} style-color="{{ display.colors.pleth }}">
+                    <div class="row parameter-small">
+                        <div class="col-1">Pleth</div>
+                        <div class="col-7"></div>
+                        <div class="col-2">SpO<sub>2</sub> (%)</div>
+                        <div class="col-2">HR<sub>Pleth</sub> (bpm)</div>
+                    </div>
+                    <div class="row parameter-large">
+                        <div class="col-8 signal-column">
+                            <canvas class="buffer-canvas" id="plethBufferCanvas" hidden></canvas>
+                            <canvas class="signal-canvas" id="plethSigCanvas"></canvas>
+                        </div>
+                        <div class="col-2" on-wheel="@.add('vitals.pleth.target', (@event.wheelDeltaY/120))">{{
+                            display.pleth }}
+                        </div>
+                        <div class="col-2" on-wheel="@.add('vitals.hfPleth.target', (@event.wheelDeltaY/120))">{{
+                            display.hfPleth }}</div>
+                    </div>
+                </div>
+                <div {{ triggers.resp ? "" : "hidden" }} style-color="{{ display.colors.resp }}">
+                    <div class="row parameter-small">
+                        <div class="col-1">Resp</div>
+                        <div class="col-7"></div>
+                        <div class="col-4">BR (bpm)</div>
+                    </div>
+                    <div class="row parameter-large">
+                        <div class="col-8 signal-column">
+                            <canvas class="buffer-canvas" id="respBufferCanvas" hidden></canvas>
+                            <canvas class="signal-canvas" id="respSigCanvas"></canvas>
+                        </div>
+                        <div class="col-4" on-wheel="@.add('vitals.resp.target', (@event.wheelDeltaY/120))">{{
+                            display.resp
+                            }}
+                        </div>
+                    </div>
+                </div>
+                <div {{#unless (triggers.nbp || triggers.temp)}}hidden{{/unless}}>
+                    <div class="row parameter-small">
+                        <div class="col-1" style-color="{{ display.colors.nbp }}">
+                            <span {{ triggers.nbp ? "" : "hidden" }}>NBP</span>
+                        </div>
+                        <div class="col-9"></div>
+                        <div class="col-2" style-color="{{ display.colors.temp }}">
+                            <span {{ triggers.temp ? "" : "hidden" }}>Temp (&deg;C)</span>
+                        </div>
+                    </div>
+                    <div class="row parameter-large">
+                        <div class="col-6" style-color="{{ display.colors.nbp }}">
+                            <span {{ triggers.nbp ? "" : "hidden" }}>
+                                {{ display.nbpSys }} / {{ display.nbpDia }} ({{ Math.round((2 * display.nbpDia +
+                                display.nbpSys)/3) }})
+                            </span>
+                        </div>
+                        <div class="col-4"></div>
+                        <div class="col-2" style-color="{{ display.colors.temp }}">
+                            <span {{ triggers.temp ? "" : "hidden" }}> {{ display.temp }}</span>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row text-center">
+                    {{#with triggers}}
+                    <div class="col">
+                        <a class="trigger-button btn btn-{{^ecg}}outline-{{/ecg}}light"
+                            on-click="@.toggle('triggers.ecg')">ECG</a>
+                    </div>
+                    <div class="col">
+                        <a class="trigger-button btn btn-{{^pleth}}outline-{{/pleth}}light"
+                            on-click="@.toggle('triggers.pleth')">SpO<sub>2</sub></a>
+                    </div>
+                    <div class="col">
+                        <a class="trigger-button btn btn-{{^resp}}outline-{{/resp}}light"
+                            on-click="@.toggle('triggers.resp')">Resp</a>
+                    </div>
+                    <div class="col">
+                        <a class="trigger-button btn btn-{{^nbp}}outline-{{/nbp}}light"
+                            on-click="@.toggle('triggers.nbp')">NBP</a>
+                    </div>
+                    <div class="col">
+                        <a class="trigger-button btn btn-{{^temp}}outline-{{/temp}}light"
+                            on-click="@.toggle('triggers.temp')">Temp</a>
+                    </div>
+                    <div class="col-2"></div>
+                    <div class="col"><a class="trigger-button btn btn-{{^rBeep}}outline-{{/rBeep}}light"
+                            on-click="@.toggle('triggers.rBeep')">Beep</a></div>
+                    {{/with}}
+                </div>
+            </div>
+            {{#if connection.remotePeerId === ''}}
+            <button class="btn btn-primary mt-4 mb-1" type="button" data-bs-toggle="collapse"
+                data-bs-target="#vitalControls" aria-expanded="false" aria-controls="vitalControls">
+                Set Vitals
+            </button>
+            <div class="collapse" id="vitalControls">
+                <div class="row">
+                    {{#each vitals, @keypath keypath}}
+                    <div class="col-lg col-md-4 col-sm-6 my-1">
+                        <div class="form-floating">
+                            <input class="form-control" type="number" value="{{ .target }}" min="{{ .min }}"
+                                max="{{ .max }}" id="{{ keypath }}-target" placeholder="{{ .target }}">
+                            <label for="{{ keypath }}-target">{{{ .title }}}</label>
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
             {{/if}}
         </div>
-        <div class="row mb-2 rounded text-bg-light">
-            <div class="col-8 text-start">{{ patient.surname + ", " + patient.firstName }} *{{ patient.dob.toLocaleDateString() }}</div>
-            <div class="col-4 text-end">{{ display.dateTime }}</div>
-        </div>
-        <div {{ triggers.ecg ? "" : "hidden" }} style-color="{{ display.colors.ecg }}">
-            <div class="row parm-sm">
-                <div class="col-1">ECG - II</div>
-                <div class="col-7"></div>
-                <div class="col-4">HR<sub>ECG</sub> (bpm)</div>
-            </div>
-            <div class="row parm-lg">
-                <div class="col-8 signal-column">
-                    <canvas class="buffer-canvas" id="ecgBufferCanvas" hidden></canvas>
-                    <canvas class="signal-canvas" id="ecgSigCanvas"></canvas>
-                </div>
-                <div class="col-4" on-wheel="@.add('vitals.hfEcg.target', (@event.wheelDeltaY/120))"><span>{{
-                        display.hfEcg }}</span></div>
-            </div>
-        </div>
-        <div {{ triggers.pleth ? "" : "hidden" }} style-color="{{ display.colors.pleth }}">
-            <div class="row parm-sm">
-                <div class="col-1">Pleth</div>
-                <div class="col-7"></div>
-                <div class="col-2">SpO<sub>2</sub> (%)</div>
-                <div class="col-2">HR<sub>Pleth</sub> (bpm)</div>
-            </div>
-            <div class="row parm-lg">
-                <div class="col-8 signal-column">
-                    <canvas class="buffer-canvas" id="plethBufferCanvas" hidden></canvas>
-                    <canvas class="signal-canvas" id="plethSigCanvas"></canvas>
-                </div>
-                <div class="col-2" on-wheel="@.add('vitals.pleth.target', (@event.wheelDeltaY/120))">{{ display.pleth }}
-                </div>
-                <div class="col-2" on-wheel="@.add('vitals.hfPleth.target', (@event.wheelDeltaY/120))">{{
-                    display.hfPleth }}</div>
-            </div>
-        </div>
-        <div {{ triggers.resp ? "" : "hidden" }} style-color="{{ display.colors.resp }}">
-            <div class="row parm-sm">
-                <div class="col-1">Resp</div>
-                <div class="col-7"></div>
-                <div class="col-4">BR (bpm)</div>
-            </div>
-            <div class="row parm-lg">
-                <div class="col-8 signal-column">
-                    <canvas class="buffer-canvas" id="respBufferCanvas" hidden></canvas>
-                    <canvas class="signal-canvas" id="respSigCanvas"></canvas>
-                </div>
-                <div class="col-4" on-wheel="@.add('vitals.resp.target', (@event.wheelDeltaY/120))">{{ display.resp }}
-                </div>
-            </div>
-        </div>
-        <div {{#unless (triggers.nbp || triggers.temp)}}hidden{{/unless}}>
-            <div class="row parm-sm">
-                <div class="col-1" style-color="{{ display.colors.nbp }}">
-                    <span {{ triggers.nbp ? "" : "hidden" }}>NBP</span>
-                </div>
-                <div class="col-9"></div>
-                <div class="col-2" style-color="{{ display.colors.temp }}">
-                    <span {{ triggers.temp ? "" : "hidden" }}>Temp (&deg;C)</span>
-                </div>
-            </div>
-            <div class="row parm-lg">
-                <div class="col-6" style-color="{{ display.colors.nbp }}">
-                    <span {{ triggers.nbp ? "" : "hidden" }}>
-                        {{ display.nbpSys }} / {{ display.nbpDia }} ({{ (2 * display.nbpDia + display.nbpSys)/3 }})
-                    </span>
-                </div>
-                <div class="col-4"></div>
-                <div class="col-2" style-color="{{ display.colors.temp }}">
-                    <span {{ triggers.temp ? "" : "hidden" }}> {{ display.temp }}</span>
-                </div>
-            </div>
-        </div>
-        <hr>
-        <div class="row text-center">
-            {{#with triggers}}
-            <div class="col">
-                <a class="trigger-button btn btn-{{^ecg}}outline-{{/ecg}}light"
-                    on-click="@.toggle('triggers.ecg')">ECG</a>
-            </div>
-            <div class="col">
-                <a class="trigger-button btn btn-{{^pleth}}outline-{{/pleth}}light"
-                    on-click="@.toggle('triggers.pleth')">SpO<sub>2</sub></a>
-            </div>
-            <div class="col">
-                <a class="trigger-button btn btn-{{^resp}}outline-{{/resp}}light"
-                    on-click="@.toggle('triggers.resp')">Resp</a>
-            </div>
-            <div class="col">
-                <a class="trigger-button btn btn-{{^nbp}}outline-{{/nbp}}light"
-                    on-click="@.toggle('triggers.nbp')">NBP</a>
-            </div>
-            <div class="col">
-                <a class="trigger-button btn btn-{{^temp}}outline-{{/temp}}light"
-                    on-click="@.toggle('triggers.temp')">Temp</a>
-            </div>
-            <div class="col-2"></div>
-            <div class="col"><a class="trigger-button btn btn-{{^rBeep}}outline-{{/rBeep}}light"
-                    on-click="@.toggle('triggers.rBeep')">Beep</a></div>
-            {{/with}}
-        </div>
-        {{#if connection.status != "connected"}}
-        <div class="row mt-5 mb-2">Target Values:</div>
-        <div class="row">
-            {{#each vitals, @keypath keypath}}
-            <div class="col">
-                <label class="form-label" for="{{ keypath }}-target">{{{ .title }}}</label>
-                <input class="form-control" type="number" value="{{ .target }}" min="{{ .mi }}" max="{{ .max }}"
-                    id="{{ keypath }}-target">
-                <label class="form-label mt-2" for="{{ keypath }}-override">Override:</label>
-                <input class="form-control" type="text" value="{{ .override }}" id="{{ keypath }}-override">
-            </div>
-            {{/each}}
-        </div>
-        {{/if}}
         </script>
     </div>
 </body>

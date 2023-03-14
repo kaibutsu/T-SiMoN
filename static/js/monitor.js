@@ -10,30 +10,55 @@ ractive = new Ractive({
         },
         triggers: standardTriggers,
         connection: {
-            status: 'disconnected',
             peerId: '',
-            peers: [],
+            remotePeerId: '',
         }
     }
 });
 
-var peer = new Peer(generateWordString(wordStringLength));
+var peer = new Peer(generateWordString(wordStringLength), { debug: 3 });
 let peerConnection = null;
 
 peer.on('open', (id) => {
-    ractive.set('connection.peerId', id);
+    ractive.set({
+        'connection.peerId': id,
+    });
 });
 
 peer.on('connection', (c) => {
     peerConnection = c;
 
-    ractive.set('connection.status', 'connected');
-    ractive.push('connection.peers', peerConnection.peer)
+    ractive.set('connection.remotePeerId', peerConnection.peer);
+
+    setTimeout(() => {
+        peerConnection.send(
+            prepareDataForSend(
+                type = 'patient',
+                payload = ractive.get('patient')
+            )
+        )
+
+        peerConnection.send(
+            prepareDataForSend(
+                type = 'vitals',
+                payload = ractive.get('vitals')
+            )
+        )
+    }, 1000);
 
     peerConnection.on('data', (data) => {
-        // Work with data...
+        validatedData = validateData(data);
+        ractive.set(validatedData.type, validatedData.payload)
     });
+
+    peerConnection.on('close', () => {
+        closeConnection();
+    })
 });
+
+peer.on('disconnect', () => {
+    closeConnection();
+})
 
 ractive.observe('triggers.*', (newValue, oldValue, keypath) => {
     triggerName = keypath.split('.').pop();
@@ -86,6 +111,4 @@ if (!signalUpdateTimer) {
             );
         }
     }, 1000 / signalPixelsPerSecond);
-}
-
-
+};

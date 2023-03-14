@@ -2,42 +2,79 @@ ractive = new Ractive({
     target: '#ractive-target',
     template: '#ractive-template',
     data: {
-        patient: {},
-        vitals: {},
+        patient: null,
+        vitals: null,
         connection: {
-            status: 'disconnected',
             peerId: '',
-            monitorPeerId: '',
-            peers: [],
+            remotePeerId: '',
+            keepInSync: false,
         },
     },
-    connectToMonitor: (monitorPeerId) => {
-        c = peer.connect(monitorPeerId);
-        initConnection(c)
+    connectToMonitor: () => {
+        initConnection(document.getElementById('monitorPeerId').value)
+    },
+    disconnectFromMonitor: () => {
+        peerConnection.close()
+        peer.disconnect()
+    },
+    sendVitals: () => {
+        sendVitals()
     }
 });
 
-var peer = new Peer(generateWordString(wordStringLength));
+var peer = new Peer(generateWordString(wordStringLength), { debug: 3 });
 let peerConnection = null;
+const mySearchParams = new URLSearchParams(window.location.search)
 
 peer.on('open', (id) => {
     ractive.set('connection.peerId', id);
+    for (const [key, value] of mySearchParams) {
+        console.log(key, value)
+        if (key === 'monitorPeerId') {
+            initConnection(value)
+        }
+    }
 });
 
-peer.on('connection', initConnection);
-
 peer.on('disconnected', (c) => {
-    ractive.set('connection.status', 'disconnected');
-    ractive.push('connection.peers', peerConnection.peer);
+    closeConnection(c.peer, role = 'simulator')
 })
 
-function initConnection(c) {
-    peerConnection = c;
+function initConnection(monitorPeerId) {
+    peerConnection = peer.connect(monitorPeerId);
 
-    ractive.set('connection.status', 'connected');
-    ractive.push('connection.peers', peerConnection.peer);
+    peerConnection.on('open', () => {
+        ractive.set('connection.remotePeerId', peerConnection.peer);
+    });
+
+    peerConnection.on('close', () => {
+        closeConnection(deleteLocalData = true)
+    })
 
     peerConnection.on('data', (data) => {
-        // Work with data...
+        validatedData = validateData(data);
+        ractive.set(validatedData.type, validatedData.payload)
     });
 }
+
+function sendVitals() {
+    peerConnection.send(
+        prepareDataForSend(
+            type = 'patient',
+            payload = ractive.get('patient')
+        )
+    )
+
+    peerConnection.send(
+        prepareDataForSend(
+            type = 'vitals',
+            payload = ractive.get('vitals')
+        )
+    )
+}
+
+ractive.observe('patient.* vitals.*', (newValue, oldValue, keypath) => {
+    if (ractive.get('connection.keepInSync')) {
+        sendVitals()
+    }
+}, { 'init': false, 'defer': true });
