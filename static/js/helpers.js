@@ -1,25 +1,25 @@
-function varyParameter(parameterName) {
-    parameter = ractive.get('vitals.' + parameterName)
+function varyVital(vitalName) {
+    vital = ractive.get('vitals.' + vitalName)
 
-    if (parameter.override) {
+    if (vital.id === 'hfPleth') {
         ractive.set(
-            'display.' + parameterName,
-            ractive.get('display.' + parameter.override)
+            'display.hfPleth',
+            ractive.get('display.hfEcg')
         );
         return;
     }
 
     let newDisplay = Math.round(
-        parameter.target
-        + (2 * (Math.random() - 0.5) * parameter.varAmp)
+        vital.target
+        + (2 * (Math.random() - 0.5) * vital.varAmp)
     )
     newDisplay = Math.max(
         Math.min(
-            newDisplay, parameter.max
-        ), parameter.min
+            newDisplay, vital.max
+        ), vital.min
     )
 
-    ractive.set('display.' + parameterName, newDisplay)
+    ractive.set('display.' + vitalName, newDisplay)
 };
 
 function updateMonitor() {
@@ -28,11 +28,11 @@ function updateMonitor() {
     runtime += updateInterval;
     ractive.set('display.dateTime', new Date().toLocaleString());
 
-    Object.entries(vitals).forEach(([parameterName, parameterDef]) => {
+    Object.entries(vitals).forEach(([vitalName, vitalDef]) => {
         if (
-            runtime % ractive.get("vitals." + parameterName + ".varFreq") < updateInterval
+            runtime % ractive.get('vitals.' + vitalName + '.varFreq') < updateInterval
         ) {
-            varyParameter(parameterName)
+            varyVital(vitalName)
         }
     });
 }
@@ -48,11 +48,11 @@ function updateMonitor() {
  * 
  * @returns {Promise} - A promise that resolves when the beep sound is finished.
  **/
-function beep(duration, frequency, volume, audioContext){
+function beep(duration, frequency, volume, audioContext) {
     if (!audioContext | !(audioContext instanceof AudioContext)) {
-        throw new Error("No valid AudioContext given.")
+        throw new Error('No valid AudioContext given.')
     }
-    
+
     return new Promise((resolve, reject) => {
         // Set default duration if not provided
         duration = duration || 200;
@@ -69,7 +69,7 @@ function beep(duration, frequency, volume, audioContext){
             oscillatorNode.frequency.value = frequency;
 
             // Set the type of oscillator
-            oscillatorNode.type= "sine";
+            oscillatorNode.type = 'sine';
             gainNode.connect(myAudioContext.destination);
 
             // Set the gain to the volume
@@ -81,11 +81,59 @@ function beep(duration, frequency, volume, audioContext){
 
             // Resolve the promise when the sound is finished
             oscillatorNode.onended = () => {
-                    myAudioContext.close();
-                    resolve();
+                myAudioContext.close();
+                resolve();
             };
         } catch (error) {
             reject(error);
         }
     });
+}
+
+function prepareDataForSend(type, payload) {
+    if (!validDataTypes.includes(type)) {
+        throw new Error(
+            'Unkonwn Type of \'' + type + '\'. '
+            + 'Type should be one of the following: \''
+            + validDataTypes.join('\', \'')
+            + '\'.'
+        );
+    };
+
+    if (typeof payload != 'object') {
+        throw new Error('Payload should be of type \'object\'.');
+    };
+
+    return {
+        'type': type,
+        'payload': payload,
+    };
+}
+
+function validateData(dataPackage) {
+    if (!validDataTypes.includes(dataPackage.type)) {
+        throw new Error(
+            'Unkonwn Type of \'' + dataPackage.type + '\'. '
+            + 'Type should be one of the following: \''
+            + validDataTypes.join('\', \'')
+            + '\'.'
+        );
+    };
+
+    if (typeof dataPackage.payload != 'object') {
+        throw new Error('Payload should be of type \'object\'.');
+    };
+
+    return dataPackage;
+}
+
+function closeConnection(deleteLocalData = false) {
+    ractive.set('connection.remotePeerId', '');
+
+    if (deleteLocalData) {
+        ractive.set({
+            'patient': {},
+            'vitals': {},
+        });
+    };
 }

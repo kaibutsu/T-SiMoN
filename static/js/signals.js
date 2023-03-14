@@ -44,18 +44,18 @@ function getCurvePoints(signalName, bufferWidth, minValue, maxSigHeight) {
 
 function initCanvasContexts(signalName) {
     contexts[signalName] = {}
-    contexts[signalName]['signal'] = ractive.find("#" + signalName + "SigCanvas").getContext("2d", { willReadFrequently: true });
-    contexts[signalName]['buffer'] = ractive.find("#" + signalName + "BufferCanvas").getContext("2d", { willReadFrequently: true });
+    contexts[signalName]['signal'] = ractive.find('#' + signalName + 'SigCanvas').getContext('2d', { willReadFrequently: true });
+    contexts[signalName]['buffer'] = ractive.find('#' + signalName + 'BufferCanvas').getContext('2d', { willReadFrequently: true });
 }
 
 function updateCanvas(signalName) {
-    currentContext = contexts[signalName]["signal"]
+    currentContext = contexts[signalName]['signal']
     currentContext.canvas.width = currentContext.canvas.parentElement.clientWidth;
 
-    signal = ractive.get("display.signals." + signalName);
-    signalTrigger = ractive.get("display.signals." + signalName).trigger;
+    signal = ractive.get('display.signals.' + signalName);
+    signalTrigger = ractive.get('display.signals.' + signalName).trigger;
 
-    signalCanvas = contexts[signalName]["signal"]
+    signalCanvas = contexts[signalName]['signal']
     if (signalTrigger) {
         signalCanvas.strokeStyle = ractive.get('display.colors.' + signalName)
     } else {
@@ -65,11 +65,11 @@ function updateCanvas(signalName) {
 }
 
 function bufferNextCurve(signalName, amplitude = 0.9) {
-    let signalContext = contexts[signalName]["signal"];
-    let bufferContext = contexts[signalName]["buffer"];
+    let signalContext = contexts[signalName]['signal'];
+    let bufferContext = contexts[signalName]['buffer'];
     let bufferPointer = bufferPointers[signalName];
-    let eventParameter = ractive.get("display.signals." + signalName + ".eventParameter")
-    let eventRate = ractive.get("display." + eventParameter)
+    let eventVital = ractive.get('display.signals.' + signalName + '.eventVital')
+    let eventRate = ractive.get('display.' + eventVital)
 
     // Adapt buffer size to one event:
     let bufferWidth = bufferContext.canvas.width = Math.round((60 / eventRate) * signalPixelsPerSecond);

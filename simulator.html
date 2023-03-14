@@ -1,0 +1,145 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="icon" type="image/svg" href="./static/logos/favicon.svg">
+    <link rel="stylesheet" href="./static/css/styles.css">
+    <link rel="stylesheet" href="./static/lib/css/bootstrap.min.css">
+
+    <script src="./static/lib/js/ractive.min.js" defer></script>
+    <script src="./static/lib/js/bootstrap.bundle.min.js" defer></script>
+    <script src="./static/lib/js/peerjs.min.js" defer></script>
+    <script src="./static/js/globals.js" defer></script>
+    <script src="./static/js/helpers.js" defer></script>
+    <script src="./static/js/wordsGenerator.js" defer></script>
+    <script src="./static/js/simulator.js" defer></script>
+
+    <title>Simulator - T-SiMoN</title>
+</head>
+
+<body>
+    &nbsp;
+    <div id="ractive-target" class="container">
+        <!-- should actually be
+            <script id="ractive-template" type="text/ractive">
+        -->
+        <script id="ractive-template" type="text/html">
+        <!-- (but then code highlighting doesn't work...)  -->
+            {{ #if (connection.peerId === '') }}
+        <div class="p-2 alert alert-warning">
+            Not (yet) recieved a Peer ID. The simulator view does not work in offline mode. Please check your
+            internet
+            connection.
+        </div>
+        {{ elseif (connection.remotePeerId === '') }}
+        <div class="p-2 alert alert-primary row align-items-center">
+            <div class="col">Registered as "{{ connection.peerId }}". Not connected to any monitor.</div>
+            <div class="col text-end">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="monitorPeerId" placeholder="Monitor Peer-ID"
+                        aria-describedby="connectButton">
+                    <button class="btn btn-success" type="button" id="connectButton"
+                        on-click="@this.connectToMonitor()">Connect</button>
+                </div>
+            </div>
+        </div>
+        {{ elseif (connection.remotePeerId != '' && patient != {} && vitals != {}) }}
+        <div class="p-2 alert alert-success row align-items-center">
+            <div class="col">
+                Connected to monitor "{{ connection.remotePeerId }}" as "{{connection.peerId}}".
+            </div>
+            <div class="col text-end">
+                <button class="btn btn-outline-danger" on-click="@this.disconnectFromMonitor()">Disconnect</button>
+            </div>
+        </div>
+        {{else}}
+        <div class="p-2 row alert alert-danger">Connection Status Unavailable</div>
+        {{/if}}
+        {{#if (connection.remotePeerId && patient && vitals) }}
+        <div class="card">
+            <div class="card-header text-bg-secondary h3">Patient Info</div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-6 col-md">
+                        <div class="form-floating my-1">
+                            <input class="form-control" type="text" value="{{ patient.firstName }}"
+                                id="patientFirstName" placeholder="First Name">
+                            <label for="patientFirstName">First Name</label>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md">
+                        <div class="form-floating my-1">
+                            <input class="form-control" type="text" value="{{ patient.lastName }}" id="patientLastName"
+                                placeholder="Last Name">
+                            <label for="patientLastName">Last Name</label>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md">
+                        <div class="form-floating my-1">
+                            <input class="form-control" type="datetime-local" value="{{ patient.dob }}" id="patientDob"
+                                placeholder="Date of Birth">
+                            <label for="patientDob">Date of Birth</label>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md">
+                        <div class="form-floating my-1">
+                            <input class="form-control" type="text" value="{{ patient.pid }}" id="patientPid"
+                                placeholder="Patient ID">
+                            <label for="patientPid">Patient ID</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="my-3 card">
+            <div class="card-header text-bg-danger">
+                <div class="row align-items-center">
+                    <div class="col h3">
+                        Vitals
+                    </div>
+                    <div class="col text-end">
+                        <div class="form-check form-switch form-check-reverse">
+                            <input class="form-check-input" type="checkbox" role="switch" id="keepInSync"
+                                checked="{{ connection.keepInSync }}">
+                            <label class="form-check-label" for="keepInSync">Keep in sync with monitor</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {{#each vitals, @keypath keypath}}
+                    <div class="my-2 col-xl col-lg-2 col-md-4 col-6">
+                        <div class="card">
+                            <div class="h6 card-header text-danger">
+                                <label class="form-label" for="{{ keypath }}-target">{{{ .title }}}</label>
+                            </div>
+                            <div class="card-body">
+                                <input class="form-control" type="number" value="{{ .target }}" min="{{ .min }}"
+                                    max="{{ .max }}" id="{{ keypath }}-target" placeholder="{{ .target }}">
+                            </div>
+                            <div class="card-footer">
+                                <small class="text-muted">Max: {{ .max }}, Min: {{ .min }}</small>
+                            </div>
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+            <div class="card-footer text-end">
+                <button class="btn btn-success" on-click="@this.sendVitals()" {{ connection.keepInSync ? 'disabled' : ''
+                    }}>
+                    Send Vitals
+                </button>
+            </div>
+        </div>
+        {{/if}}
+        </script>
+    </div>
+</body>
+
+</html>

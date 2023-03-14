@@ -5,7 +5,22 @@
 
 body {
     font-size: 100%;
-    font-family: Oswald-Medium !important;
+}
+
+.offline {
+    color:violet
+}
+
+.online {
+    color:yellow
+}
+
+.connected {
+    color:lightgreen
+}
+
+.con_unavailable {
+    color:red
 }
 
 .signal-canvas {
@@ -21,16 +36,13 @@ body {
     height: 100px;
 }
 
-.parm-lg {
-    font-size: 4em;
+.parameter-large {
+    font-size: 90px;
+    line-height: 1;
 }
 
-.parm-sm {
-    font-size: 1em
-}
-
-.parm-md {
-    font-size: 4em
+.parameter-small {
+    font-size: 20px
 }
 
 .trigger-button {
