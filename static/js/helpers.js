@@ -134,6 +134,7 @@ function closeConnection(deleteLocalData = false) {
         ractive.set({
             'patient': {},
             'vitals': {},
+            'sounds': {}
         });
     };
 }

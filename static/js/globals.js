@@ -11,7 +11,28 @@ const signalPixelsPerSecond = 150;
 const signalLineWidth = 4;
 const wordStringLength = 3;
 
-const validDataTypes = ['patient', 'vitals'];
+const validDataTypes = ['patient', 'vitals', 'sounds'];
+
+const standardSounds = {
+    breathing: {
+        selected: 'None',
+        probability: '0.7',
+        files: {
+            none: {
+                label: 'None',
+                fileName: '""',
+            },
+            crying: {
+                label: 'Crying',
+                fileName: 'crying.mp3',
+            },
+            grunting: {
+                label: 'Grunting',
+                fileName: 'grunting.mp3',
+            },
+        },
+    }
+}
 
 const standardColors = {
     ecg: 'lawngreen',
