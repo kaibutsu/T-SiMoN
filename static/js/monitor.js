@@ -4,11 +4,12 @@ ractive = new Ractive({
     data: {
         patient: standardPatient,
         vitals: standardVitals,
+        triggers: standardTriggers,
+        sounds: standardSounds,
         display: {
             colors: standardColors,
             signals: standardSignals,
         },
-        triggers: standardTriggers,
         connection: {
             peerId: '',
             remotePeerId: '',
@@ -44,6 +45,13 @@ peer.on('connection', (c) => {
                 payload = ractive.get('vitals')
             )
         )
+
+        peerConnection.send(
+            prepareDataForSend(
+                type = 'sounds',
+                payload = ractive.get('sounds')
+            )
+        )
     }, 1000);
 
     peerConnection.on('data', (data) => {
@@ -68,7 +76,7 @@ ractive.observe('triggers.*', (newValue, oldValue, keypath) => {
         }
     })
     if (triggerName === 'rBeep') {
-        newValue ? monitorAudioContext = new AudioContext() : monitorAudioContext.close();
+        newValue ? beepAudioContext = new AudioContext() : beepAudioContext.close();
     }
 }, { 'init': false, 'defer': true });
 
@@ -107,8 +115,18 @@ if (!signalUpdateTimer) {
                 150,
                 220 + (220 / 100 * ractive.get('display.pleth')),
                 100,
-                monitorAudioContext
+                beepAudioContext
             );
+        }
+
+        respBufferPointer = bufferPointers['resp']
+        breathingSound = ractive.get('sounds.breathing')
+        if (
+            !(['None', ''].includes(breathingSound.selected))
+            && !(respBufferPointer.pos < respBufferPointer.size)
+            && (Math.random() < breathingSound.probability)
+        ) {
+            document.getElementById(breathingSound.selected).play()
         }
     }, 1000 / signalPixelsPerSecond);
 };

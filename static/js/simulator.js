@@ -4,6 +4,7 @@ ractive = new Ractive({
     data: {
         patient: null,
         vitals: null,
+        sounds: null,
         connection: {
             peerId: '',
             remotePeerId: '',
@@ -17,8 +18,8 @@ ractive = new Ractive({
         peerConnection.close()
         peer.disconnect()
     },
-    sendVitals: () => {
-        sendVitals()
+    sendToMonitor: () => {
+        sendToMonitor()
     }
 });
 
@@ -57,7 +58,7 @@ function initConnection(monitorPeerId) {
     });
 }
 
-function sendVitals() {
+function sendToMonitor() {
     peerConnection.send(
         prepareDataForSend(
             type = 'patient',
@@ -71,10 +72,17 @@ function sendVitals() {
             payload = ractive.get('vitals')
         )
     )
+
+    peerConnection.send(
+        prepareDataForSend(
+            type = 'sounds',
+            payload = ractive.get('sounds')
+        )
+    )
 }
 
-ractive.observe('patient.* vitals.*', (newValue, oldValue, keypath) => {
+ractive.observe('patient.* vitals.* sounds.*', (newValue, oldValue, keypath) => {
     if (ractive.get('connection.keepInSync')) {
-        sendVitals()
+        sendToMonitor()
     }
 }, { 'init': false, 'defer': true });
