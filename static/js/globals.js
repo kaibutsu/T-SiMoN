@@ -85,17 +85,6 @@ const standardVitals = {
         initDelay: 1000,
         trigger: 'ecg'
     },
-    hfPleth: {
-        id: 'hfPleth',
-        title: 'HF<sub>Pleth</sub> (bpm)',
-        target: 140,
-        min: 0,
-        max: 230,
-        varFreq: 2000,
-        varAmp: 2,
-        initDelay: 10000,
-        trigger: 'pleth'
-    },
     pleth: {
         id: 'pleth',
         title: 'SpO<sub>2</sub> (%)',

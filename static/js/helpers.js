@@ -1,14 +1,6 @@
 function varyVital(vitalName) {
     vital = ractive.get('vitals.' + vitalName)
 
-    if (vital.id === 'hfPleth') {
-        ractive.set(
-            'display.hfPleth',
-            ractive.get('display.hfEcg')
-        );
-        return;
-    }
-
     let newDisplay = Math.round(
         vital.target
         + (2 * (Math.random() - 0.5) * vital.varAmp)
