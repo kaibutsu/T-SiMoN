@@ -16,7 +16,6 @@ ractive = new Ractive({
     },
     disconnectFromMonitor: () => {
         peerConnection.close()
-        peer.disconnect()
     },
     sendToMonitor: () => {
         sendToMonitor()
