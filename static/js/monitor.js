@@ -14,7 +14,10 @@ ractive = new Ractive({
             peerId: '',
             remotePeerId: '',
         }
-    }
+    },
+    disconnectMonitor: () => {
+        peerConnection.close()
+    },
 });
 
 var peer = new Peer(generateWordString(wordStringLength), { debug: 3 });
