@@ -50,6 +50,9 @@
                     <span class="connected">
                         Remote mode as {{ connection.peerId }}. Simulator: {{ connection.remotePeerId }}
                     </span>
+                    <button class="btn btn-outline-danger btn-sm py-0 my-1" on-click="@this.disconnectMonitor()">
+                        Disconnect
+                    </button>
                     {{else}}
                     <span class="con_unavailable">Connection Status Unavailable</span>
                     {{/if}}
@@ -72,7 +75,8 @@
                             <canvas class="buffer-canvas" id="ecgBufferCanvas" hidden></canvas>
                             <canvas class="signal-canvas" id="ecgSigCanvas"></canvas>
                         </div>
-                        <div class="col-4" on-wheel="@.add('vitals.hfEcg.target', (Math.round(@event.wheelDeltaY/100)))"><span>{{
+                        <div class="col-4"
+                            on-wheel="@.add('vitals.hfEcg.target', (Math.round(@event.wheelDeltaY/100)))"><span>{{
                                 display.hfEcg }}</span></div>
                     </div>
                 </div>
@@ -88,10 +92,12 @@
                             <canvas class="buffer-canvas" id="plethBufferCanvas" hidden></canvas>
                             <canvas class="signal-canvas" id="plethSigCanvas"></canvas>
                         </div>
-                        <div class="col-2" on-wheel="@.add('vitals.pleth.target', (Math.round(@event.wheelDeltaY/100)))">{{
+                        <div class="col-2"
+                            on-wheel="@.add('vitals.pleth.target', (Math.round(@event.wheelDeltaY/100)))">{{
                             display.pleth }}
                         </div>
-                        <div class="col-2" on-wheel="@.add('vitals.hfEcg.target', (Math.round(@event.wheelDeltaY/100)))">{{
+                        <div class="col-2"
+                            on-wheel="@.add('vitals.hfEcg.target', (Math.round(@event.wheelDeltaY/100)))">{{
                             display.hfEcg }}</div>
                     </div>
                 </div>
