@@ -40,12 +40,16 @@ peer.on('disconnected', (c) => {
     closeConnection(c.peer, role = 'simulator')
 })
 
+peer.on('error', e => {
+    console.log("Fehler:", e)
+})
+
 function initConnection(monitorPeerId) {
     peerConnection = peer.connect(monitorPeerId);
 
-    peerConnection.on('open', () => {
-        ractive.set('connection.remotePeerId', peerConnection.peer);
-    });
+    if (peerConnection) {
+        ractive.set('connection.remotePeerId', peerConnection.peer)
+    }
 
     peerConnection.on('close', () => {
         closeConnection(deleteLocalData = true)
