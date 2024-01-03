@@ -34,7 +34,7 @@ peer.on('connection', (c) => {
 
     ractive.set('connection.remotePeerId', peerConnection.peer);
 
-    setTimeout(() => {
+    peerConnection.on('open', () => {
         peerConnection.send(
             prepareDataForSend(
                 type = 'patient',
@@ -54,8 +54,8 @@ peer.on('connection', (c) => {
                 type = 'sounds',
                 payload = ractive.get('sounds')
             )
-        )
-    }, 1000);
+        )   
+    })
 
     peerConnection.on('data', (data) => {
         validatedData = validateData(data);
