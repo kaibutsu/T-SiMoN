@@ -102,34 +102,36 @@ Object.entries(ractive.get('display.signals')).forEach(([signalName, signalDef])
 })
 
 if (!busTimer) {
-    busTimer = setInterval(() => {
-        updateMonitor();
-    }, updateInterval)
-}
+    let intervalCounter = 0
 
-if (!signalUpdateTimer) {
-    signalUpdateTimer = setInterval(() => {
+    busTimer = setInterval(() => {
+        console.log(msPerPixel, intervalCounter, updateInterval)
+        if (intervalCounter*msPerPixel > updateInterval)  {
+            intervalCounter = 0;
+            updateMonitor();
+            ecgBufferPointer = bufferPointers['ecg']
+            if (ractive.get('triggers.rBeep') & (!(ecgBufferPointer.pos < ecgBufferPointer.size))) {
+                beep(
+                    150,
+                    220 + (220 / 100 * ractive.get('display.pleth')),
+                    100,
+                    beepAudioContext
+                );
+            }
+    
+            respBufferPointer = bufferPointers['resp']
+            breathingSound = ractive.get('sounds.breathing')
+            if (
+                !(['None', ''].includes(breathingSound.selected))
+                && !(respBufferPointer.pos < respBufferPointer.size)
+                && (Math.random() < breathingSound.probability)
+            ) {
+                document.getElementById(breathingSound.selected).play()
+            } 
+        }
         Object.entries(ractive.get('display.signals')).forEach(([signalName, signalDef]) => {
             animateSignal(signalName)
         });
-        ecgBufferPointer = bufferPointers['ecg']
-        if (ractive.get('triggers.rBeep') & (!(ecgBufferPointer.pos < ecgBufferPointer.size))) {
-            beep(
-                150,
-                220 + (220 / 100 * ractive.get('display.pleth')),
-                100,
-                beepAudioContext
-            );
-        }
-
-        respBufferPointer = bufferPointers['resp']
-        breathingSound = ractive.get('sounds.breathing')
-        if (
-            !(['None', ''].includes(breathingSound.selected))
-            && !(respBufferPointer.pos < respBufferPointer.size)
-            && (Math.random() < breathingSound.probability)
-        ) {
-            document.getElementById(breathingSound.selected).play()
-        }
-    }, 1000 / signalPixelsPerSecond);
-};
+        intervalCounter++;
+    }, msPerPixel)
+}

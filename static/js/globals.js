@@ -7,7 +7,7 @@ const contexts = {};
 const timeStamp = new Date()
 
 const updateInterval = 100;
-const signalPixelsPerSecond = 150;
+const msPerPixel = 5;
 const signalLineWidth = 4;
 const wordStringLength = 3;
 

@@ -2,42 +2,42 @@ function getCurvePoints(signalName, bufferWidth, minValue, maxSigHeight) {
     switch (signalName) {
         case 'pleth':
             return [
-                { x: 0.0 * bufferWidth, y: minValue - 0.0 * maxSigHeight },
-                { x: 0.1 * bufferWidth, y: minValue - 0.0 * maxSigHeight },
-                { x: 0.2 * bufferWidth, y: minValue - 1.0 * maxSigHeight },
-                { x: 0.4 * bufferWidth, y: minValue - 0.4 * maxSigHeight },
-                { x: 0.7 * bufferWidth, y: minValue - 0.5 * maxSigHeight },
-                { x: 0.9 * bufferWidth, y: minValue - 0.0 * maxSigHeight },
-                { x: 1.0 * bufferWidth, y: minValue - 0.0 * maxSigHeight },
+                { x: Math.floor(0.0 * bufferWidth), y: Math.floor(minValue - 0.0 * maxSigHeight) },
+                { x: Math.floor(0.1 * bufferWidth), y: Math.floor(minValue - 0.0 * maxSigHeight) },
+                { x: Math.floor(0.2 * bufferWidth), y: Math.floor(minValue - 1.0 * maxSigHeight) },
+                { x: Math.floor(0.4 * bufferWidth), y: Math.floor(minValue - 0.4 * maxSigHeight) },
+                { x: Math.floor(0.7 * bufferWidth), y: Math.floor(minValue - 0.5 * maxSigHeight) },
+                { x: Math.floor(0.9 * bufferWidth), y: Math.floor(minValue - 0.0 * maxSigHeight) },
+                { x: Math.floor(1.0 * bufferWidth), y: Math.floor(minValue - 0.0 * maxSigHeight) },
             ]
         case 'ecg':
             return [
-                { x: 0.000 * bufferWidth, y: minValue - 1.00 * maxSigHeight },
-                { x: 0.030 * bufferWidth, y: minValue - 0.10 * maxSigHeight },
-                { x: 0.100 * bufferWidth, y: minValue - 0.20 * maxSigHeight },
-                { x: 0.200 * bufferWidth, y: minValue - 0.20 * maxSigHeight },
-                { x: 0.275 * bufferWidth, y: minValue - 0.35 * maxSigHeight },
-                { x: 0.350 * bufferWidth, y: minValue - 0.20 * maxSigHeight },
-                { x: 0.500 * bufferWidth, y: minValue - 0.20 * maxSigHeight },
-                { x: 0.625 * bufferWidth, y: minValue - 0.20 * maxSigHeight },
-                { x: 0.700 * bufferWidth, y: minValue - 0.35 * maxSigHeight },
-                { x: 0.775 * bufferWidth, y: minValue - 0.20 * maxSigHeight },
-                { x: 0.900 * bufferWidth, y: minValue - 0.20 * maxSigHeight },
-                { x: 0.970 * bufferWidth, y: minValue - 0.20 * maxSigHeight },
-                { x: 1.000 * bufferWidth, y: minValue - 1.00 * maxSigHeight },
+                { x: Math.floor(0.000 * bufferWidth), y: Math.floor(minValue - 1.00 * maxSigHeight) },
+                { x: Math.floor(0.030 * bufferWidth), y: Math.floor(minValue - 0.10 * maxSigHeight) },
+                { x: Math.floor(0.100 * bufferWidth), y: Math.floor(minValue - 0.20 * maxSigHeight) },
+                { x: Math.floor(0.200 * bufferWidth), y: Math.floor(minValue - 0.20 * maxSigHeight) },
+                { x: Math.floor(0.275 * bufferWidth), y: Math.floor(minValue - 0.35 * maxSigHeight) },
+                { x: Math.floor(0.350 * bufferWidth), y: Math.floor(minValue - 0.20 * maxSigHeight) },
+                { x: Math.floor(0.500 * bufferWidth), y: Math.floor(minValue - 0.20 * maxSigHeight) },
+                { x: Math.floor(0.625 * bufferWidth), y: Math.floor(minValue - 0.20 * maxSigHeight) },
+                { x: Math.floor(0.700 * bufferWidth), y: Math.floor(minValue - 0.35 * maxSigHeight) },
+                { x: Math.floor(0.775 * bufferWidth), y: Math.floor(minValue - 0.20 * maxSigHeight) },
+                { x: Math.floor(0.900 * bufferWidth), y: Math.floor(minValue - 0.20 * maxSigHeight) },
+                { x: Math.floor(0.970 * bufferWidth), y: Math.floor(minValue - 0.20 * maxSigHeight) },
+                { x: Math.floor(1.000 * bufferWidth), y: Math.floor(minValue - 1.00 * maxSigHeight) },
             ]
         case 'resp':
             return [
-                { x: 0.00 * bufferWidth, y: minValue },
-                { x: 0.10 * bufferWidth, y: minValue },
-                { x: 0.45 * bufferWidth, y: minValue - maxSigHeight },
-                { x: 0.90 * bufferWidth, y: minValue },
-                { x: 1.00 * bufferWidth, y: minValue },
+                { x: Math.floor(0.00 * bufferWidth), y: Math.floor(minValue) },
+                { x: Math.floor(0.10 * bufferWidth), y: Math.floor(minValue) },
+                { x: Math.floor(0.45 * bufferWidth), y: Math.floor(minValue - maxSigHeight) },
+                { x: Math.floor(0.90 * bufferWidth), y: Math.floor(minValue) },
+                { x: Math.floor(1.00 * bufferWidth), y: Math.floor(minValue) },
             ]
         default:
             return [
-                { x: 0, y: 0.5 * maxSigHeight },
-                { x: bufferWidth, y: 0.5 * maxSigHeight }
+                { x: 0, y: Math.floor(0.5 * maxSigHeight) },
+                { x: bufferWidth, y: Math.floor(0.5 * maxSigHeight) }
             ]
     }
 }
@@ -72,7 +72,7 @@ function bufferNextCurve(signalName, amplitude = 0.9) {
     let eventRate = ractive.get('display.' + eventVital)
 
     // Adapt buffer size to one event:
-    let bufferWidth = bufferContext.canvas.width = Math.round((60 / eventRate) * signalPixelsPerSecond);
+    let bufferWidth = bufferContext.canvas.width = Math.round((60 / eventRate) * 1000 / msPerPixel);
     let bufferHeigth = bufferContext.canvas.height = Math.round(signalContext.canvas.height - signalContext.lineWidth * 2);
 
     // Set line color and width:
