@@ -105,7 +105,6 @@ if (!busTimer) {
     let intervalCounter = 0
 
     busTimer = setInterval(() => {
-        console.log(msPerPixel, intervalCounter, updateInterval)
         if (intervalCounter*msPerPixel > updateInterval)  {
             intervalCounter = 0;
             updateMonitor();
