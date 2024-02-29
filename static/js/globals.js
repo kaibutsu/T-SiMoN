@@ -5,9 +5,8 @@ let bufferPointers = {};
 const contexts = {};
 
 const timeStamp = new Date()
-
-const updateInterval = 100;
-const msPerPixel = 5;
+const monitorRefreshIntervalMs = 20;
+const displayValueUpdateInterval = 100;
 const signalLineWidth = 4;
 const wordStringLength = 3;
 

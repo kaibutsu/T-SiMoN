@@ -17,12 +17,12 @@ function varyVital(vitalName) {
 function updateMonitor() {
     let vitals = ractive.get('vitals');
 
-    runtime += updateInterval;
+    runtime += displayValueUpdateInterval;
     ractive.set('display.dateTime', new Date().toLocaleString());
 
     Object.entries(vitals).forEach(([vitalName, vitalDef]) => {
         if (
-            runtime % ractive.get('vitals.' + vitalName + '.varFreq') < updateInterval
+            runtime % ractive.get('vitals.' + vitalName + '.varFreq') < displayValueUpdateInterval
         ) {
             varyVital(vitalName)
         }

@@ -50,7 +50,7 @@ function initCanvasContexts(signalName) {
 
 function updateCanvas(signalName) {
     currentContext = contexts[signalName]['signal']
-    currentContext.canvas.width = currentContext.canvas.parentElement.clientWidth;
+    canvasWidth = currentContext.canvas.width = currentContext.canvas.parentElement.clientWidth;
 
     signal = ractive.get('display.signals.' + signalName);
     signalTrigger = ractive.get('display.signals.' + signalName).trigger;
@@ -64,15 +64,15 @@ function updateCanvas(signalName) {
     signalCanvas.lineWidth = signalLineWidth;
 }
 
-function bufferNextCurve(signalName, amplitude = 0.9) {
+function bufferNextCurve(signalName, pixelPerRefresh, amplitude = 0.9) {
     let signalContext = contexts[signalName]['signal'];
     let bufferContext = contexts[signalName]['buffer'];
     let bufferPointer = bufferPointers[signalName];
     let eventVital = ractive.get('display.signals.' + signalName + '.eventVital')
     let eventRate = ractive.get('display.' + eventVital)
-
+    
     // Adapt buffer size to one event:
-    let bufferWidth = bufferContext.canvas.width = Math.round((60 / eventRate) * 1000 / msPerPixel);
+    let bufferWidth = bufferContext.canvas.width = Math.round((60 * 1000) / (eventRate * monitorRefreshIntervalMs)) * pixelPerRefresh
     let bufferHeigth = bufferContext.canvas.height = Math.round(signalContext.canvas.height - signalContext.lineWidth * 2);
 
     // Set line color and width:
@@ -84,7 +84,7 @@ function bufferNextCurve(signalName, amplitude = 0.9) {
     let minValue = bufferHeigth - bufferContext.lineWidth
     // calculate points to draw curve
     points = getCurvePoints(signalName, bufferWidth, minValue, maxSigHeight)
-
+    
     // interpolate curve
     // from: https://stackoverflow.com/questions/7054272/how-to-draw-smooth-curve-through-n-points-using-javascript-html5-canvas
     bufferContext.moveTo(points[0].x, points[0].y);
@@ -100,20 +100,31 @@ function bufferNextCurve(signalName, amplitude = 0.9) {
 }
 
 function animateSignal(signalName) {
-    signalContext = contexts[signalName]['signal']
-    bufferContext = contexts[signalName]['buffer']
-    bufferPointer = bufferPointers[signalName]
+    let signalContext = contexts[signalName]['signal'];
+    let signalCanvasWidth = signalContext.canvas.width;
+    let signalCanvasHeight = signalContext.canvas.height;
+
+    let bufferContext = contexts[signalName]['buffer'];
+    let bufferPointer = bufferPointers[signalName];
+    let pixelPerRefresh = Math.floor(signalCanvasWidth/10);
+    while (pixelPerRefresh > 5) {
+        pixelPerRefresh = Math.floor(pixelPerRefresh * 0.5)
+    }
+    if (pixelPerRefresh < 1) {
+        pixelPerRefresh = 1
+    }
+    
     if (!(bufferPointer.pos < bufferPointer.size)) {
-        bufferNextCurve(signalName);
+        bufferNextCurve(signalName, pixelPerRefresh);
     }
     bufferContext.save;
-    let bufferedCol = bufferContext.getImageData(bufferPointer.pos, 0, 1, signalContext.canvas.height)
+    let bufferedCol = bufferContext.getImageData(bufferPointer.pos, 0, pixelPerRefresh, signalCanvasHeight)
     // shift everything to the left:
-    oldImageData = signalContext.getImageData(1, 0, signalContext.canvas.width - 1, signalContext.canvas.height)
+    oldImageData = signalContext.getImageData(pixelPerRefresh, 0, signalCanvasWidth - pixelPerRefresh, signalCanvasHeight)
     signalContext.putImageData(oldImageData, 0, 0);
     // Write buffer column to right end:
-    signalContext.putImageData(bufferedCol, signalContext.canvas.width - 1, 0);
+    signalContext.putImageData(bufferedCol, signalCanvasWidth - pixelPerRefresh, 0);
 
-    bufferPointer.pos = bufferPointer.pos + 1;
+    bufferPointer.pos = bufferPointer.pos + pixelPerRefresh;
     bufferContext.restore()
 }

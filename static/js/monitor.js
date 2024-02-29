@@ -105,9 +105,10 @@ if (!busTimer) {
     let intervalCounter = 0
 
     busTimer = setInterval(() => {
-        if (intervalCounter*msPerPixel > updateInterval)  {
+        if (intervalCounter*monitorRefreshIntervalMs >= displayValueUpdateInterval)  {
             intervalCounter = 0;
             updateMonitor();
+        }
             ecgBufferPointer = bufferPointers['ecg']
             if (ractive.get('triggers.rBeep') & (!(ecgBufferPointer.pos < ecgBufferPointer.size))) {
                 beep(
@@ -127,10 +128,9 @@ if (!busTimer) {
             ) {
                 document.getElementById(breathingSound.selected).play()
             } 
-        }
         Object.entries(ractive.get('display.signals')).forEach(([signalName, signalDef]) => {
             animateSignal(signalName)
         });
         intervalCounter++;
-    }, msPerPixel)
+    }, monitorRefreshIntervalMs)
 }
