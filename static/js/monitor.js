@@ -13,13 +13,14 @@ ractive = new Ractive({
         connection: {
             peerId: '',
             remotePeerId: '',
+            error: ''
         }
     },
     disconnectMonitor: () => {
         peerConnection.close()
     },
     scrollVital: (vital, diffValue) => {
-        let oldVital = ractive.get('vitals.' + vital) 
+        let oldVital = ractive.get('vitals.' + vital)
         let newTarget = oldVital.target + diffValue
 
         if (newTarget >= oldVital.min && newTarget <= oldVital.max) {
@@ -29,12 +30,13 @@ ractive = new Ractive({
     }
 });
 
-var peer = new Peer(generateWordString(wordStringLength), { debug: 3 });
+let peer = new Peer(generateWordString(wordStringLength), { debug: 3 });
 let peerConnection = null;
 
 peer.on('open', (id) => {
     ractive.set({
         'connection.peerId': id,
+        'connection.remotePeerId': ''
     });
 });
 
@@ -64,7 +66,7 @@ peer.on('connection', (c) => {
                 payload = ractive.get('sounds')
             )
         )
-    })
+    });
 
     peerConnection.on('data', (data) => {
         validatedData = validateData(data);
@@ -73,12 +75,21 @@ peer.on('connection', (c) => {
 
     peerConnection.on('close', () => {
         closeConnection();
-    })
+    });
+
+    peerConnection.on('error', (err) => {
+        ractive.set('connection.error', "Error: " + err + ". Try reloading and/or contact the developers.")
+    });
 });
 
 peer.on('disconnect', () => {
-    closeConnection();
+    closeConnection(resetPeerId = true);
 })
+
+peer.on('error', (err) => {
+    ractive.set('connection.error', "Error: " + err + ". Try reloading and/or contact the developers.")
+    closeConnection(resetPeerId = true);
+});
 
 ractive.observe('triggers.*', (newValue, oldValue, keypath) => {
     triggerName = keypath.split('.').pop();

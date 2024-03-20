@@ -119,8 +119,12 @@ function validateData(dataPackage) {
     return dataPackage;
 }
 
-function closeConnection(deleteLocalData = false) {
+function closeConnection(resetPeerId=false, deleteLocalData = false) {
     ractive.set('connection.remotePeerId', '');
+
+    if (resetPeerId) {
+        ractive.set('connection.peerId', '');
+    };
 
     if (deleteLocalData) {
         ractive.set({

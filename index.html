@@ -23,8 +23,7 @@
 </head>
 
 <body>
-    &nbsp;
-    <div id="ractive-target">
+    <div class="monitor-target" id="ractive-target">
         <!-- should actually be
         <script id="ractive-template" type="text/ractive"> -->
         <script id="ractive-template" type="text/html">
@@ -36,6 +35,10 @@
         {{/each}}
 
         <div class="container">
+            &nbsp;
+            {{#if (connection.error != '') }}
+            <div class="alert alert-danger">{{ connection.error }}</div>
+            {{/if}}
             <div class="monitor-container">
                 <div class="text-end font-monospace">
                     {{#if (connection.peerId === '') }}
@@ -75,8 +78,8 @@
                             <canvas class="buffer-canvas" id="ecgBufferCanvas" hidden></canvas>
                             <canvas class="signal-canvas" id="ecgSigCanvas"></canvas>
                         </div>
-                        <div class="col-4"
-                            on-wheel="@this.scrollVital('hfEcg', (Math.round(@event.wheelDeltaY/100)))"><span>{{
+                        <div class="col-4" on-wheel="@this.scrollVital('hfEcg', (Math.round(@event.wheelDeltaY/100)))">
+                            <span>{{
                                 display.hfEcg }}</span></div>
                     </div>
                 </div>
@@ -92,12 +95,12 @@
                             <canvas class="buffer-canvas" id="plethBufferCanvas" hidden></canvas>
                             <canvas class="signal-canvas" id="plethSigCanvas"></canvas>
                         </div>
-                        <div class="col-2"
-                            on-wheel="@this.scrollVital('pleth', (Math.round(@event.wheelDeltaY/100)))">{{
+                        <div class="col-2" on-wheel="@this.scrollVital('pleth', (Math.round(@event.wheelDeltaY/100)))">
+                            {{
                             display.pleth }}
                         </div>
-                        <div class="col-2"
-                            on-wheel="@this.scrollVital('hfEcg', (Math.round(@event.wheelDeltaY/100)))">{{
+                        <div class="col-2" on-wheel="@this.scrollVital('hfEcg', (Math.round(@event.wheelDeltaY/100)))">
+                            {{
                             display.hfEcg }}</div>
                     </div>
                 </div>

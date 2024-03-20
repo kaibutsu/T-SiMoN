@@ -22,14 +22,14 @@
 </head>
 
 <body>
-    &nbsp;
     <div id="ractive-target" class="container">
+        &nbsp;
         <!-- should actually be
             <script id="ractive-template" type="text/ractive">
         -->
         <script id="ractive-template" type="text/html">
         <!-- (but then code highlighting doesn't work...)  -->
-            {{ #if (connection.peerId === '') }}
+        {{ #if (connection.peerId === '') }}
         <div class="p-2 alert alert-warning">
             Not (yet) recieved a Peer ID. The simulator view does not work in offline mode. Please check your internet
             connection.
@@ -46,7 +46,7 @@
                 </div>
             </div>
         </div>
-        {{ elseif (connection.remotePeerId != '' && patient != {} && vitals != {}) }}
+        {{ elseif (connection.remotePeerId != '') }}
         <div class="p-2 alert alert-success row align-items-center">
             <div class="col-auto">
                 Connected to monitor "{{ connection.remotePeerId }}" as "{{connection.peerId}}".
@@ -65,9 +65,12 @@
         {{else}}
         <div class="p-2 row alert alert-danger">Connection Status Unavailable</div>
         {{/if}}
-        {{#if (connection.remotePeerId && patient && vitals) }}
+        {{ #if (connection.remotePeerId != '') }}
         <div class="card">
             <div class="card-header text-bg-secondary h3">Patient Info</div>
+            {{#if (!patient) }}
+            <div class="alert alert-warning">Waiting for data...</div>
+            {{else}}
             <div class="card-body">
                 <div class="row">
                     <div class="col-6 col-md">
@@ -100,6 +103,7 @@
                     </div>
                 </div>
             </div>
+            {{/if}}
         </div>
         <div class="my-3 card">
             <div class="card-header text-bg-danger">
@@ -107,6 +111,9 @@
                     Vitals
                 </h3>
             </div>
+            {{#if (!vitals) }}
+            <div class="alert alert-warning">Waiting for data...</div>
+            {{else}}
             <div class="card-body">
                 <div class="row">
                     {{#each vitals, @keypath keypath}}
@@ -127,6 +134,7 @@
                     {{/each}}
                 </div>
             </div>
+            {{/if}}
         </div>
         <div class="card">
             <div class="card-header text-bg-primary">

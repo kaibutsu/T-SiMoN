@@ -8,11 +8,11 @@ ractive = new Ractive({
         connection: {
             peerId: '',
             remotePeerId: '',
-            keepInSync: false,
+            keepInSync: true,
         },
     },
     connectToMonitor: () => {
-        initConnection(document.getElementById('monitorPeerId').value)
+        peerConnection = initConnection()
     },
     disconnectFromMonitor: () => {
         peerConnection.close()
@@ -22,18 +22,29 @@ ractive = new Ractive({
     }
 });
 
-var peer = new Peer(generateWordString(wordStringLength), { debug: 3 });
+let peer = new Peer(generateWordString(wordStringLength), { debug: 3 });
 let peerConnection = null;
 const mySearchParams = new URLSearchParams(window.location.search)
 
 peer.on('open', (id) => {
-    ractive.set('connection.peerId', id);
-    for (const [key, value] of mySearchParams) {
-        console.log(key, value)
-        if (key === 'monitorPeerId') {
-            initConnection(value)
-        }
-    }
+    ractive.set({
+        'connection.peerId': id,
+        'connection.remotePeerId': ''
+    });
+    peerConnection = initConnection()
+
+    peerConnection.on("open", () => {
+        ractive.set('connection.remotePeerId', peerConnection.peer)
+    });
+
+    peerConnection.on('close', () => {
+        closeConnection(deleteLocalData = true)
+    });
+
+    peerConnection.on('data', (data) => {
+        validatedData = validateData(data);
+        ractive.set(validatedData.type, validatedData.payload)
+    });
 });
 
 peer.on('disconnected', (c) => {
@@ -44,21 +55,18 @@ peer.on('error', e => {
     console.log("Fehler:", e)
 })
 
-function initConnection(monitorPeerId) {
-    peerConnection = peer.connect(monitorPeerId);
-
-    if (peerConnection) {
-        ractive.set('connection.remotePeerId', peerConnection.peer)
+function initConnection() {
+    targetMonitorPeerId = document.getElementById('monitorPeerId').value
+    if (!targetMonitorPeerId) {
+        for (const [key, value] of mySearchParams) {
+            if (key === 'monitorPeerId') {
+                targetMonitorPeerId = value;
+            }
+        }
     }
 
-    peerConnection.on('close', () => {
-        closeConnection(deleteLocalData = true)
-    })
-
-    peerConnection.on('data', (data) => {
-        validatedData = validateData(data);
-        ractive.set(validatedData.type, validatedData.payload)
-    });
+    peerConnection = peer.connect(targetMonitorPeerId);
+    return peerConnection;
 }
 
 function sendToMonitor() {

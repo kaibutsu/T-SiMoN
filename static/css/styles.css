@@ -5,23 +5,31 @@
 
 body {
     font-size: 100%;
-    background-color: #001632 !important;
+}
+
+.monitor-target {
+    background-color: #001632;
+    height: 100vh;
+}
+
+.error {
+    color: red;
 }
 
 .offline {
-    color:violet
+    color:violet;
 }
 
 .online {
-    color:yellow
+    color:yellow;
 }
 
 .connected {
-    color:lightgreen
+    color:lightgreen;
 }
 
 .con_unavailable {
-    color:red
+    color:orange;
 }
 
 .signal-canvas {
