@@ -76,7 +76,7 @@
                             <canvas class="signal-canvas" id="ecgSigCanvas"></canvas>
                         </div>
                         <div class="col-4"
-                            on-wheel="@.add('vitals.hfEcg.target', (Math.round(@event.wheelDeltaY/100)))"><span>{{
+                            on-wheel="@this.scrollVital('hfEcg', (Math.round(@event.wheelDeltaY/100)))"><span>{{
                                 display.hfEcg }}</span></div>
                     </div>
                 </div>
@@ -93,11 +93,11 @@
                             <canvas class="signal-canvas" id="plethSigCanvas"></canvas>
                         </div>
                         <div class="col-2"
-                            on-wheel="@.add('vitals.pleth.target', (Math.round(@event.wheelDeltaY/100)))">{{
+                            on-wheel="@this.scrollVital('pleth', (Math.round(@event.wheelDeltaY/100)))">{{
                             display.pleth }}
                         </div>
                         <div class="col-2"
-                            on-wheel="@.add('vitals.hfEcg.target', (Math.round(@event.wheelDeltaY/100)))">{{
+                            on-wheel="@this.scrollVital('hfEcg', (Math.round(@event.wheelDeltaY/100)))">{{
                             display.hfEcg }}</div>
                     </div>
                 </div>

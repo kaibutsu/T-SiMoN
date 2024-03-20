@@ -18,6 +18,15 @@ ractive = new Ractive({
     disconnectMonitor: () => {
         peerConnection.close()
     },
+    scrollVital: (vital, diffValue) => {
+        let oldVital = ractive.get('vitals.' + vital) 
+        let newTarget = oldVital.target + diffValue
+
+        if (newTarget >= oldVital.min && newTarget <= oldVital.max) {
+            console.log(oldVital.min, newTarget, oldVital.max)
+            ractive.set('vitals.' + vital + '.target', newTarget)
+        }
+    }
 });
 
 var peer = new Peer(generateWordString(wordStringLength), { debug: 3 });
@@ -54,7 +63,7 @@ peer.on('connection', (c) => {
                 type = 'sounds',
                 payload = ractive.get('sounds')
             )
-        )   
+        )
     })
 
     peerConnection.on('data', (data) => {
@@ -105,29 +114,29 @@ if (!busTimer) {
     let intervalCounter = 0
 
     busTimer = setInterval(() => {
-        if (intervalCounter*monitorRefreshIntervalMs >= displayValueUpdateInterval)  {
+        if (intervalCounter * monitorRefreshIntervalMs >= displayValueUpdateInterval) {
             intervalCounter = 0;
             updateMonitor();
         }
-            ecgBufferPointer = bufferPointers['ecg']
-            if (ractive.get('triggers.rBeep') & (!(ecgBufferPointer.pos < ecgBufferPointer.size))) {
-                beep(
-                    150,
-                    220 + (220 / 100 * ractive.get('display.pleth')),
-                    100,
-                    beepAudioContext
-                );
-            }
-    
-            respBufferPointer = bufferPointers['resp']
-            breathingSound = ractive.get('sounds.breathing')
-            if (
-                !(['None', ''].includes(breathingSound.selected))
-                && !(respBufferPointer.pos < respBufferPointer.size)
-                && (Math.random() < breathingSound.probability)
-            ) {
-                document.getElementById(breathingSound.selected).play()
-            } 
+        ecgBufferPointer = bufferPointers['ecg']
+        if (ractive.get('triggers.rBeep') & (!(ecgBufferPointer.pos < ecgBufferPointer.size))) {
+            beep(
+                150,
+                220 + (220 / 100 * ractive.get('display.pleth')),
+                100,
+                beepAudioContext
+            );
+        }
+
+        respBufferPointer = bufferPointers['resp']
+        breathingSound = ractive.get('sounds.breathing')
+        if (
+            !(['None', ''].includes(breathingSound.selected))
+            && !(respBufferPointer.pos < respBufferPointer.size)
+            && (Math.random() < breathingSound.probability)
+        ) {
+            document.getElementById(breathingSound.selected).play()
+        }
         Object.entries(ractive.get('display.signals')).forEach(([signalName, signalDef]) => {
             animateSignal(signalName)
         });
