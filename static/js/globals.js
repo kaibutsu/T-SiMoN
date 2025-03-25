@@ -77,7 +77,7 @@ const standardVitals = {
         id: 'hfEcg',
         title: 'HF<sub>ECG</sub> (bpm)',
         target: 140,
-        min: 10,
+        min: 40,
         max: 230,
         varFreq: 1000,
         varAmp: 1,
