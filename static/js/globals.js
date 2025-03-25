@@ -77,7 +77,7 @@ const standardVitals = {
         id: 'hfEcg',
         title: 'HF<sub>ECG</sub> (bpm)',
         target: 140,
-        min: 0,
+        min: 10,
         max: 230,
         varFreq: 1000,
         varAmp: 1,
@@ -114,7 +114,7 @@ const standardVitals = {
         max: 220,
         varFreq: 10000,
         varAmp: null,
-        initDelay: 30000,
+        initDelay: 10000,
         trigger: 'nbp',
     },
     nbpDia: {
@@ -125,7 +125,7 @@ const standardVitals = {
         max: 100,
         varFreq: 10000,
         varAmp: null,
-        initDelay: 30000,
+        initDelay: 10000,
         trigger: 'nbp',
     },
     temp: {
