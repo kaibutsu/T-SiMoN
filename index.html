@@ -115,7 +115,7 @@
                             <canvas class="buffer-canvas" id="respBufferCanvas" hidden></canvas>
                             <canvas class="signal-canvas" id="respSigCanvas"></canvas>
                         </div>
-                        <div class="col-4" on-wheel="@.add('vitals.resp.target', (@event.wheelDeltaY/120))">{{
+                        <div class="col-4" on-wheel="@.scrollVital('resp', (Math.round(@event.wheelDeltaY/120)))">{{
                             display.resp
                             }}
                         </div>
@@ -134,13 +134,13 @@
                     <div class="row parameter-large">
                         <div class="col-6" style-color="{{ display.colors.nbp }}">
                             <span {{ triggers.nbp ? "" : "hidden" }}>
-                                {{ display.nbpSys }} / {{ display.nbpDia }} ({{ Math.round((2 * display.nbpDia +
+                                <span on-wheel="@.scrollVital('nbpSys', (Math.round(@event.wheelDeltaY/120)))">{{ display.nbpSys }}</span> / <span on-wheel="@.scrollVital('nbpDia', (Math.round(@event.wheelDeltaY/120)))">{{ display.nbpDia }}</span> ({{ Math.round((2 * display.nbpDia +
                                 display.nbpSys)/3) }})
                             </span>
                         </div>
                         <div class="col-4"></div>
                         <div class="col-2" style-color="{{ display.colors.temp }}">
-                            <span {{ triggers.temp ? "" : "hidden" }}> {{ display.temp }}</span>
+                            <span {{ triggers.temp ? "" : "hidden" }} on-wheel="@.scrollVital('temp', @event.wheelDeltaY/1000)"> {{ display.temp }}</span>
                         </div>
                     </div>
                 </div>
@@ -212,7 +212,7 @@
                             value="{{ sounds.breathing.probability }}">
                     </div>
                 </div>
-            </div>
+            </div> 
             {{/if}}
         </div>
         </script>

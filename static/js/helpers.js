@@ -1,10 +1,10 @@
 function varyVital(vitalName) {
     vital = ractive.get('vitals.' + vitalName)
 
-    let newDisplay = Math.round(
+    let newDisplay = Math.round(10**vital.decimals*(
         vital.target
         + (2 * (Math.random() - 0.5) * vital.varAmp)
-    )
+    ))/10**vital.decimals
     newDisplay = Math.max(
         Math.min(
             newDisplay, vital.max
